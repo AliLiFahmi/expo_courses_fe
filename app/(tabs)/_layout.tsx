@@ -34,6 +34,7 @@ export default function ButtonTabsLayout() {
           options={{
             title: "Courses",
             headerShown: false,
+            popToTopOnBlur: true,
             tabBarIcon: ({ color, size }) => (
               <Octicons name="book" size={size} color={color} />
             ),

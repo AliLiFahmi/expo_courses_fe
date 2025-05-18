@@ -236,7 +236,7 @@ export default function Index() {
               <Pressable
                 key={course.id}
                 className="bg-gray-700 rounded-lg p-4 mb-4"
-                onPress={() => console.log("Course selected:", course.id)}
+                onPress={() => router.push(`/(tabs)/(course)/${course.id}`)}
               >
                 <View className="flex flex-row items-center mb-3">
                   <View

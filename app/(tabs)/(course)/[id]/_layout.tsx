@@ -5,9 +5,8 @@ export default function Layout() {
     <Stack>
       <Stack.Screen
         name="index"
-        options={{ title: "Course", headerShown: false }}
+        options={{ title: "Task", headerShown: false }}
       />
-      <Stack.Screen name="[id]" options={{ title: "ID", headerShown: false }} />
     </Stack>
   );
 }
