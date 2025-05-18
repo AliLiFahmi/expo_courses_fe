@@ -2,7 +2,6 @@ import { router } from "expo-router";
 import {
   BookOpen,
   Calendar,
-  ChevronLeft,
   Clock,
   GraduationCap,
   Plus,
@@ -116,14 +115,16 @@ export default function Index() {
     <View className="flex-1 flex flex-col bg-gray-900">
       {/* Header Area with Back Button */}
       <View className="pt-12 px-4 pb-4 flex flex-row items-center">
-        <Pressable
+        {/* <Pressable
           className="mr-3 p-2 bg-gray-800 rounded-full"
           onPress={() => router.back()}
         >
           <ChevronLeft size={20} color="#FFFFFF" />
-        </Pressable>
+        </Pressable> */}
         <View className="flex-1">
-          <Text className="text-white text-xl font-bold">Mata Kuliah</Text>
+          <Text className="text-white text-2xl font-bold mb-1">
+            Mata Kuliah
+          </Text>
           <Text className="text-gray-400">Daftar mata kuliah semester ini</Text>
         </View>
       </View>
@@ -133,7 +134,7 @@ export default function Index() {
         className="flex-1 bg-gray-800 rounded-t-3xl"
         showsVerticalScrollIndicator={false}
       >
-        <View className="px-4 pt-6 mb-4">
+        <View className="px-4 pt-4 mb-4">
           <View className="bg-gray-700 rounded-xl p-5">
             <Text className="text-white text-lg font-bold mb-4">
               Statistik Akademik
