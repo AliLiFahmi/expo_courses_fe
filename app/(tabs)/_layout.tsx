@@ -1,46 +1,65 @@
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import Octicons from "@expo/vector-icons/Octicons";
+import { Tabs } from "expo-router";
+import React from "react";
 
-
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function ButtonTabsLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
+    <React.Fragment>
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: "#818CF8",
+          tabBarInactiveTintColor: "#6B7280",
+          tabBarStyle: {
+            backgroundColor: "#111827",
+            borderTopColor: "#1F2937",
+            height: 60,
+            borderTopWidth: -2,
+            paddingTop: 8,
           },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="(home)"
+          options={{
+            title: "Home",
+            headerShown: false,
+            tabBarIcon: ({ color, size }) => (
+              <Octicons name="home" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="(course)"
+          options={{
+            title: "Courses",
+            headerShown: false,
+            tabBarIcon: ({ color, size }) => (
+              <Octicons name="book" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="(document)"
+          options={{
+            title: "Documents",
+            headerShown: false,
+            tabBarIcon: ({ color, size }) => (
+              <Octicons name="info" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="(setting)"
+          options={{
+            title: "Profile",
+            headerShown: false,
+            tabBarIcon: ({ color, size }) => (
+              <FontAwesome6 name="circle-user" size={size} color={color} />
+            ),
+          }}
+        />
+      </Tabs>
+    </React.Fragment>
   );
 }
