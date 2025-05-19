@@ -29,6 +29,7 @@ export default function ButtonTabsLayout() {
           options={{
             title: "Beranda",
             headerShown: false,
+            popToTopOnBlur: true,
             tabBarIcon: ({ color, size }) => (
               <Octicons name="home" size={size} color={color} />
             ),
@@ -50,6 +51,7 @@ export default function ButtonTabsLayout() {
           options={{
             title: "Tentang",
             headerShown: false,
+            popToTopOnBlur: true,
             tabBarIcon: ({ color, size }) => (
               <Octicons name="info" size={size} color={color} />
             ),
@@ -60,6 +62,7 @@ export default function ButtonTabsLayout() {
           options={{
             title: "Pengaturan",
             headerShown: false,
+            popToTopOnBlur: true,
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="settings-outline" size={size} color={color} />
             ),

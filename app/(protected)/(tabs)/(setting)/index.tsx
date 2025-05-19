@@ -1,3 +1,4 @@
+import { AuthContext } from "@/utils/authContext";
 import {
   Bell,
   ChevronRight,
@@ -7,9 +8,12 @@ import {
   Shield,
   User,
 } from "lucide-react-native";
+import { useContext } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function Index() {
+  const authContext = useContext(AuthContext);
+
   const userProfile = {
     name: "Zendo",
     nim: "12345678",
@@ -110,7 +114,7 @@ export default function Index() {
         {/* Logout Button */}
         <Pressable
           className="bg-red-600/20 rounded-lg p-4 mb-6 flex-row items-center"
-          onPress={() => console.log("Logout pressed")}
+          onPress={authContext.logOut}
         >
           <View className="bg-red-600/20 p-2 rounded-lg w-10 h-10 items-center justify-center mr-3">
             <LogOut size={20} color="#EF4444" />
