@@ -6,7 +6,6 @@ import {
   CheckCircle,
   ChevronRight,
   Clock,
-  Plus,
 } from "lucide-react-native";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
@@ -296,14 +295,6 @@ export default function Index() {
           </View>
         </View>
       </ScrollView>
-
-      {/* Floating Action Button */}
-      <Pressable
-        className="absolute bottom-6 right-6 bg-indigo-600 w-14 h-14 rounded-full items-center justify-center shadow-lg"
-        onPress={() => router.push("/modal-course")}
-      >
-        <Plus size={24} color="#FFFFFF" />
-      </Pressable>
     </View>
   );
 }

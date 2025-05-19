@@ -1,4 +1,4 @@
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import Octicons from "@expo/vector-icons/Octicons";
 import { Tabs } from "expo-router";
 import React from "react";
@@ -17,12 +17,17 @@ export default function ButtonTabsLayout() {
             borderTopWidth: -2,
             paddingTop: 8,
           },
+          tabBarLabelStyle: {
+            fontSize: 14,
+            fontWeight: "500",
+            paddingBottom: 4,
+          },
         }}
       >
         <Tabs.Screen
           name="(home)"
           options={{
-            title: "Home",
+            title: "Beranda",
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Octicons name="home" size={size} color={color} />
@@ -32,7 +37,7 @@ export default function ButtonTabsLayout() {
         <Tabs.Screen
           name="(course)"
           options={{
-            title: "Courses",
+            title: "Mata Kuliah",
             headerShown: false,
             popToTopOnBlur: true,
             tabBarIcon: ({ color, size }) => (
@@ -43,7 +48,7 @@ export default function ButtonTabsLayout() {
         <Tabs.Screen
           name="(document)"
           options={{
-            title: "Documents",
+            title: "Tentang",
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Octicons name="info" size={size} color={color} />
@@ -53,10 +58,10 @@ export default function ButtonTabsLayout() {
         <Tabs.Screen
           name="(setting)"
           options={{
-            title: "Profile",
+            title: "Pengaturan",
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
-              <FontAwesome6 name="circle-user" size={size} color={color} />
+              <Ionicons name="settings-outline" size={size} color={color} />
             ),
           }}
         />
