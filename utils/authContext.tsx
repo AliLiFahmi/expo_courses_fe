@@ -18,7 +18,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const logIn = () => {
     setIsLoggedIn(true);
-    router.replace("/");
+    router.replace("/(protected)/(tabs)/(home)");
   };
 
   const logOut = () => {

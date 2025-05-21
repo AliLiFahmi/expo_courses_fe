@@ -18,22 +18,26 @@ import {
 
 const { height } = Dimensions.get("window");
 
-export default function Login() {
+export default function Register() {
   const authContext = useContext(AuthContext);
   const router = useRouter();
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     // Reset error message
     setError("");
 
     // Basic validation
-    if (!email || !password) {
-      setError("Email dan password harus diisi");
+    if (!fullName || !email || !password || !confirmPassword) {
+      setError("Semua field harus diisi");
       return;
     }
 
@@ -42,15 +46,30 @@ export default function Login() {
       return;
     }
 
+    if (password.length < 6) {
+      setError("Password harus minimal 6 karakter");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Password dan konfirmasi password tidak sama");
+      return;
+    }
+
+    if (!agreeToTerms) {
+      setError("Anda harus menyetujui syarat dan ketentuan");
+      return;
+    }
+
     try {
       setIsLoading(true);
       // Simulate loading
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      // TODO: Implement actual login logic here
-      authContext.logIn();
+      // TODO: Implement actual register logic here
+      authContext.logIn(); // Auto login after registration
       router.replace("/(protected)/(tabs)");
     } catch (err) {
-      setError("Terjadi kesalahan saat login");
+      setError("Terjadi kesalahan saat registrasi");
     } finally {
       setIsLoading(false);
     }
@@ -58,6 +77,10 @@ export default function Login() {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   return (
@@ -86,24 +109,43 @@ export default function Login() {
             style={{ minHeight: height - 50 }}
           >
             {/* Header dan Logo */}
-            <View className="items-center mt-12 mb-10">
+            <View className="items-center mb-4">
               <Image
                 source={require("../assets/images/splash-icon.png")}
                 className="w-20 h-20"
                 resizeMode="contain"
               />
               <Text className="text-3xl font-bold text-white mb-2">
-                Selamat Datang
+                Buat Akun Baru
               </Text>
               <Text className="text-white/80 text-center text-base">
-                Silakan masuk ke akun Anda
+                Isi data diri Anda untuk membuat akun
               </Text>
             </View>
 
             {/* Card Form */}
             <View className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 mb-6 shadow-lg">
-              {/* Form Login */}
-              <View className="mb-6">
+              {/* Nama Lengkap */}
+              <View className="mb-4">
+                <Text className="text-white/80 mb-2 text-sm">Nama Lengkap</Text>
+                <View className="flex-row items-center bg-white/10 rounded-xl px-4 py-1 border border-white/10">
+                  <Ionicons
+                    name="person-outline"
+                    size={20}
+                    color="rgba(255, 255, 255, 0.6)"
+                  />
+                  <TextInput
+                    className="flex-1 py-3 px-3 text-white text-base"
+                    placeholder="Masukkan nama lengkap"
+                    placeholderTextColor="rgba(255, 255, 255, 0.4)"
+                    value={fullName}
+                    onChangeText={setFullName}
+                  />
+                </View>
+              </View>
+
+              {/* Email */}
+              <View className="mb-4">
                 <Text className="text-white/80 mb-2 text-sm">Email</Text>
                 <View className="flex-row items-center bg-white/10 rounded-xl px-4 py-1 border border-white/10">
                   <Ionicons
@@ -112,7 +154,7 @@ export default function Login() {
                     color="rgba(255, 255, 255, 0.6)"
                   />
                   <TextInput
-                    className="flex-1 py-3.5 px-3 text-white text-base"
+                    className="flex-1 py-3 px-3 text-white text-base"
                     placeholder="Masukkan email Anda"
                     placeholderTextColor="rgba(255, 255, 255, 0.4)"
                     keyboardType="email-address"
@@ -123,7 +165,8 @@ export default function Login() {
                 </View>
               </View>
 
-              <View className="mb-2">
+              {/* Password */}
+              <View className="mb-4">
                 <Text className="text-white/80 mb-2 text-sm">Password</Text>
                 <View className="flex-row items-center bg-white/10 rounded-xl px-4 py-1 border border-white/10">
                   <Ionicons
@@ -132,8 +175,8 @@ export default function Login() {
                     color="rgba(255, 255, 255, 0.6)"
                   />
                   <TextInput
-                    className="flex-1 py-3.5 px-3 text-white text-base"
-                    placeholder="Masukkan password Anda"
+                    className="flex-1 py-3 px-3 text-white text-base"
+                    placeholder="Buat password"
                     placeholderTextColor="rgba(255, 255, 255, 0.4)"
                     secureTextEntry={!showPassword}
                     value={password}
@@ -149,9 +192,63 @@ export default function Login() {
                 </View>
               </View>
 
-              {/* Forgot Password Link */}
-              <TouchableOpacity className="self-end mb-6">
-                <Text className="text-white/80 text-sm">Lupa password?</Text>
+              {/* Konfirmasi Password */}
+              <View className="mb-4">
+                <Text className="text-white/80 mb-2 text-sm">
+                  Konfirmasi Password
+                </Text>
+                <View className="flex-row items-center bg-white/10 rounded-xl px-4 py-1 border border-white/10">
+                  <Ionicons
+                    name="lock-closed-outline"
+                    size={20}
+                    color="rgba(255, 255, 255, 0.6)"
+                  />
+                  <TextInput
+                    className="flex-1 py-3 px-3 text-white text-base"
+                    placeholder="Konfirmasi password"
+                    placeholderTextColor="rgba(255, 255, 255, 0.4)"
+                    secureTextEntry={!showConfirmPassword}
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                  />
+                  <TouchableOpacity onPress={toggleConfirmPasswordVisibility}>
+                    <Ionicons
+                      name={
+                        showConfirmPassword ? "eye-off-outline" : "eye-outline"
+                      }
+                      size={20}
+                      color="rgba(255, 255, 255, 0.6)"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Terms and Conditions */}
+              <TouchableOpacity
+                className="flex-row items-center mb-4"
+                onPress={() => setAgreeToTerms(!agreeToTerms)}
+              >
+                <View
+                  className={`w-5 h-5 rounded mr-2 flex items-center justify-center ${
+                    agreeToTerms
+                      ? "bg-indigo-500"
+                      : "bg-white/10 border border-white/20"
+                  }`}
+                >
+                  {agreeToTerms && (
+                    <Ionicons name="checkmark" size={14} color="white" />
+                  )}
+                </View>
+                <Text className="text-white/80 text-sm flex-1">
+                  Saya setuju dengan{" "}
+                  <Text className="text-indigo-200 font-semibold">
+                    Syarat dan Ketentuan
+                  </Text>{" "}
+                  serta{" "}
+                  <Text className="text-indigo-200 font-semibold">
+                    Kebijakan Privasi
+                  </Text>
+                </Text>
               </TouchableOpacity>
 
               {/* Error Message */}
@@ -161,7 +258,7 @@ export default function Login() {
                 </View>
               ) : null}
 
-              {/* Tombol Login */}
+              {/* Tombol Register */}
               <TouchableOpacity
                 className={`bg-indigo-500 rounded-xl py-4 items-center shadow-lg ${
                   error ? "" : "mt-2"
@@ -173,20 +270,20 @@ export default function Login() {
                   shadowRadius: 12,
                   elevation: 8,
                 }}
-                onPress={handleLogin}
+                onPress={handleRegister}
                 disabled={isLoading}
               >
                 <Text className="text-white font-semibold text-base">
-                  {isLoading ? "Sedang Memproses..." : "Masuk"}
+                  {isLoading ? "Sedang Memproses..." : "Daftar"}
                 </Text>
               </TouchableOpacity>
             </View>
 
-            {/* Link Daftar */}
+            {/* Link Login */}
             <View className="flex-row justify-center">
-              <Text className="text-white/70">Belum punya akun? </Text>
-              <Link href="/register">
-                <Text className="text-indigo-200 font-semibold">Daftar</Text>
+              <Text className="text-white/70">Sudah punya akun? </Text>
+              <Link href="/login">
+                <Text className="text-indigo-200 font-semibold">Masuk</Text>
               </Link>
             </View>
           </View>
