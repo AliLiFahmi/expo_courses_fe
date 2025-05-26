@@ -114,7 +114,7 @@ export default function Index() {
   return (
     <View className="flex-1 flex flex-col bg-gray-900">
       {/* Header Area with Back Button */}
-      <View className="pt-12 px-4 pb-4 flex flex-row items-center">
+      <View className="pt-8 px-4 pb-4 flex flex-row items-center">
         {/* <Pressable
           className="mr-3 p-2 bg-gray-800 rounded-full"
           onPress={() => router.back()}
@@ -122,7 +122,7 @@ export default function Index() {
           <ChevronLeft size={20} color="#FFFFFF" />
         </Pressable> */}
         <View className="flex-1">
-          <Text className="text-white text-2xl font-bold mb-1">
+          <Text className="text-white text-3xl font-bold mb-1">
             Mata Kuliah
           </Text>
           <Text className="text-gray-400">Daftar mata kuliah semester ini</Text>

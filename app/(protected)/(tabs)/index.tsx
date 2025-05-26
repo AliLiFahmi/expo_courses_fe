@@ -115,10 +115,10 @@ export default function Index() {
   return (
     <View className="flex-1 flex flex-col bg-gray-900">
       {/* Header Area dengan Welcome Message */}
-      <View className="pt-12 px-4 pb-4">
+      <View className="pt-8 px-4 pb-4">
         <View className="flex flex-row justify-between items-center">
           <View>
-            <Text className="text-white text-2xl font-bold mb-1">Zendo</Text>
+            <Text className="text-white text-3xl font-bold mb-1">Zendo</Text>
             <Text className="text-gray-400">
               Selamat datang kembali, Mahasiswa!
             </Text>

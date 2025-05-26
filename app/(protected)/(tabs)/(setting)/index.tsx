@@ -62,8 +62,8 @@ export default function Index() {
   return (
     <View className="flex-1 flex flex-col bg-gray-900">
       {/* Header Area */}
-      <View className="pt-12 px-4 pb-4">
-        <Text className="text-white text-2xl font-bold mb-1">Pengaturan</Text>
+      <View className="pt-8 px-4 pb-4">
+        <Text className="text-white text-3xl font-bold mb-1">Pengaturan</Text>
         <Text className="text-gray-400">Kelola akun dan preferensi Anda</Text>
       </View>
 

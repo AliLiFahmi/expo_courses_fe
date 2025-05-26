@@ -39,7 +39,7 @@ export default function CourseDetail() {
       />
 
       {/* Header */}
-      <View className="pt-12 px-4 pb-4 flex flex-row items-center">
+      <View className="pt-8 px-4 pb-4 flex flex-row items-center">
         <Pressable
           className="mr-3 p-2 bg-indigo-500/30 backdrop-blur-lg rounded-xl border border-indigo-500/50"
           onPress={() => router.back()}

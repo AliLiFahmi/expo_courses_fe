@@ -10,10 +10,10 @@ export default function Index() {
       /> */}
 
       {/* Header */}
-      <View className="pt-12 px-4 pb-4">
+      <View className="pt-8 px-4 pb-4">
         <View className="flex flex-row justify-between items-center">
           <View>
-            <Text className="text-white text-2xl font-bold mb-1">
+            <Text className="text-white text-3xl font-bold mb-1">
               Tentang Zendo
             </Text>
             <Text className="text-gray-400">Manajemen Perkuliahan Anda</Text>

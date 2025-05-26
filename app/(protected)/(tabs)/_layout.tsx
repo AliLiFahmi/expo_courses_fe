@@ -25,7 +25,7 @@ export default function ButtonTabsLayout() {
         }}
       >
         <Tabs.Screen
-          name="(home)"
+          name="index"
           options={{
             title: "Beranda",
             headerShown: false,
