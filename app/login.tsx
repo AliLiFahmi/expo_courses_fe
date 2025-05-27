@@ -48,7 +48,6 @@ export default function Login() {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       // TODO: Implement actual login logic here
       authContext.logIn();
-      router.replace("/(protected)/(tabs)");
     } catch (err) {
       setError("Terjadi kesalahan saat login");
     } finally {
