@@ -16,10 +16,10 @@ interface RegisterData extends LoginData {
 }
 
 interface AuthResponse {
-  token: string;
+  access_token: string;
   user: {
     id: string;
-    fullName: string;
+    full_name: string;
     email: string;
   };
 }
@@ -37,10 +37,10 @@ export const useAuth = () => {
       const response = await api.post<AuthResponse>("/v1/login", data);
 
       // Store token in secure storage
-      await storeSecureItem("token", response.data.token);
+      await storeSecureItem("token", response.data.access_token);
       // Store user data in async storage
       await storeData("user", response.data.user);
-
+      console.log(response.data);
       router.replace("/");
       return response.data;
     } catch (err) {
@@ -61,7 +61,7 @@ export const useAuth = () => {
       const response = await api.post<AuthResponse>("/v1/register", data);
 
       // Store token in secure storage
-      await storeSecureItem("token", response.data.token);
+      await storeSecureItem("token", response.data.access_token);
       // Store user data in async storage
       await storeData("user", response.data.user);
 
