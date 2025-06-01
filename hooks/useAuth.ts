@@ -41,7 +41,7 @@ export const useAuth = () => {
       // Store user data in async storage
       await storeData("user", response.data.user);
       console.log(response.data);
-      router.replace("/");
+      // router.replace("/");
       return response.data;
     } catch (err) {
       setError(
@@ -65,7 +65,7 @@ export const useAuth = () => {
       // Store user data in async storage
       await storeData("user", response.data.user);
 
-      router.replace("/");
+      // router.replace("/");
       return response.data;
     } catch (err) {
       setError(
@@ -81,7 +81,7 @@ export const useAuth = () => {
     try {
       await removeSecureItem("token");
       await removeData("user");
-      router.replace("/login");
+      // router.replace("/login");
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Terjadi kesalahan saat logout"

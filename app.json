@@ -4,7 +4,7 @@
     "slug": "ZENDO",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/Logo.png",
     "scheme": "ZENDO",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -28,7 +28,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/Screen.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": ["#1E1B4B", "#312E81", "#1E1B4B"]
@@ -46,7 +46,7 @@
     },
     "androidNavigationBar": {
       "visible": "visible",
-      "barStyle": "light",
+      "barStyle": "dark-content",
       "backgroundColor": "#111827"
     }
   }
