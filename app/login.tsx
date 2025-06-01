@@ -1,7 +1,7 @@
 import { AuthContext } from "@/utils/authContext";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import React, { useContext, useState } from "react";
 import {
   Dimensions,
@@ -19,40 +19,31 @@ import {
 const { height } = Dimensions.get("window");
 
 export default function Login() {
-  const authContext = useContext(AuthContext);
-  const router = useRouter();
+  const { login, isLoading, error: authError } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [validationError, setValidationError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
-    // Reset error message
-    setError("");
+    // Reset validation error message
+    setValidationError("");
 
     // Basic validation
     if (!email || !password) {
-      setError("Email dan password harus diisi");
+      setValidationError("Email dan password harus diisi");
       return;
     }
 
     if (!email.includes("@")) {
-      setError("Format email tidak valid");
+      setValidationError("Format email tidak valid");
       return;
     }
 
     try {
-      setIsLoading(true);
-      // Simulate loading
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      // TODO: Implement actual login logic here
-      authContext.logIn();
-      router.replace("/(protected)/(tabs)");
+      await login({ email, password });
     } catch (err) {
-      setError("Terjadi kesalahan saat login");
-    } finally {
-      setIsLoading(false);
+      console.error(err);
     }
   };
 
@@ -88,7 +79,7 @@ export default function Login() {
             {/* Header dan Logo */}
             <View className="items-center mt-12 mb-10">
               <Image
-                source={require("../assets/images/splash-icon.png")}
+                source={require("../assets/images/Icon.png")}
                 className="w-20 h-20"
                 resizeMode="contain"
               />
@@ -154,17 +145,19 @@ export default function Login() {
                 <Text className="text-white/80 text-sm">Lupa password?</Text>
               </TouchableOpacity>
 
-              {/* Error Message */}
-              {error ? (
+              {/* Error Messages */}
+              {(validationError || authError) && (
                 <View className="bg-red-500/15 p-3 rounded-lg mb-4">
-                  <Text className="text-red-300 text-center">{error}</Text>
+                  <Text className="text-red-300 text-center">
+                    {validationError || authError}
+                  </Text>
                 </View>
-              ) : null}
+              )}
 
               {/* Tombol Login */}
               <TouchableOpacity
                 className={`bg-indigo-500 rounded-xl py-4 items-center shadow-lg ${
-                  error ? "" : "mt-2"
+                  authError ? "" : "mt-2"
                 }`}
                 style={{
                   shadowColor: "#6366F1",

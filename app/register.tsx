@@ -1,7 +1,7 @@
 import { AuthContext } from "@/utils/authContext";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import React, { useContext, useState } from "react";
 import {
   Dimensions,
@@ -19,59 +19,54 @@ import {
 const { height } = Dimensions.get("window");
 
 export default function Register() {
-  const authContext = useContext(AuthContext);
-  const router = useRouter();
+  const { register, isLoading, error: authError } = useContext(AuthContext);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [validationError, setValidationError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   const handleRegister = async () => {
-    // Reset error message
-    setError("");
+    // Reset validation error message
+    setValidationError("");
 
     // Basic validation
     if (!fullName || !email || !password || !confirmPassword) {
-      setError("Semua field harus diisi");
+      setValidationError("Semua field harus diisi");
       return;
     }
 
     if (!email.includes("@")) {
-      setError("Format email tidak valid");
+      setValidationError("Format email tidak valid");
       return;
     }
 
     if (password.length < 6) {
-      setError("Password harus minimal 6 karakter");
+      setValidationError("Password harus minimal 6 karakter");
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Password dan konfirmasi password tidak sama");
+      setValidationError("Password dan konfirmasi password tidak sama");
       return;
     }
 
     if (!agreeToTerms) {
-      setError("Anda harus menyetujui syarat dan ketentuan");
+      setValidationError("Anda harus menyetujui syarat dan ketentuan");
       return;
     }
 
     try {
-      setIsLoading(true);
-      // Simulate loading
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      // TODO: Implement actual register logic here
-      authContext.logIn(); // Auto login after registration
-      router.replace("/(protected)/(tabs)");
+      await register({
+        full_name: fullName,
+        email,
+        password,
+      });
     } catch (err) {
-      setError("Terjadi kesalahan saat registrasi");
-    } finally {
-      setIsLoading(false);
+      console.error(err);
     }
   };
 
@@ -111,7 +106,7 @@ export default function Register() {
             {/* Header dan Logo */}
             <View className="items-center mb-4">
               <Image
-                source={require("../assets/images/splash-icon.png")}
+                source={require("../assets/images/Icon.png")}
                 className="w-20 h-20"
                 resizeMode="contain"
               />
@@ -251,17 +246,19 @@ export default function Register() {
                 </Text>
               </TouchableOpacity>
 
-              {/* Error Message */}
-              {error ? (
+              {/* Error Messages */}
+              {(validationError || authError) && (
                 <View className="bg-red-500/15 p-3 rounded-lg mb-4">
-                  <Text className="text-red-300 text-center">{error}</Text>
+                  <Text className="text-red-300 text-center">
+                    {validationError || authError}
+                  </Text>
                 </View>
-              ) : null}
+              )}
 
               {/* Tombol Register */}
               <TouchableOpacity
                 className={`bg-indigo-500 rounded-xl py-4 items-center shadow-lg ${
-                  error ? "" : "mt-2"
+                  authError ? "" : "mt-2"
                 }`}
                 style={{
                   shadowColor: "#6366F1",

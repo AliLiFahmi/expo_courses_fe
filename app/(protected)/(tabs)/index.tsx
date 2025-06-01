@@ -1,3 +1,4 @@
+import { AuthContext } from "@/utils/authContext";
 import { router } from "expo-router";
 import {
   Award,
@@ -7,10 +8,12 @@ import {
   ChevronRight,
   Clock,
 } from "lucide-react-native";
-import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { useContext, useState } from "react";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 
 export default function Index() {
+  const { user } = useContext(AuthContext);
+
   // Sample data untuk mata kuliah
   const [courses, setCourses] = useState([
     {
@@ -117,17 +120,26 @@ export default function Index() {
       {/* Header Area dengan Welcome Message */}
       <View className="pt-8 px-4 pb-4">
         <View className="flex flex-row justify-between items-center">
-          <View>
-            <Text className="text-white text-3xl font-bold mb-1">Zendo</Text>
-            <Text className="text-gray-400">
-              Selamat datang kembali, Mahasiswa!
-            </Text>
+          <View className="flex-row items-center">
+            <Image
+              source={require("../../../assets/images/Icon.png")}
+              className="w-12 h-12 mr-3"
+              resizeMode="contain"
+            />
+            <View>
+              <Text className="text-white text-3xl font-bold mb-1">Zendo</Text>
+              <Text className="text-gray-400">
+                Selamat datang kembali, Mahasiswa!
+              </Text>
+            </View>
           </View>
           <Pressable
-            className="h-10 w-10 bg-gray-800 rounded-full items-center justify-center"
-            onPress={() => console.log("Profile pressed")}
+            className="h-10 w-10 bg-indigo-600 rounded-full items-center justify-center"
+            onPress={() => router.push("/(tabs)/(setting)")}
           >
-            <Text className="text-white font-bold">A</Text>
+            <Text className="text-white font-bold">
+              {user?.full_name ? user.full_name[0].toUpperCase() : ""}
+            </Text>
           </Pressable>
         </View>
       </View>

@@ -12,13 +12,14 @@ import { useContext } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function Index() {
-  const authContext = useContext(AuthContext);
+  const { user, logout, isLoading } = useContext(AuthContext);
 
-  const userProfile = {
-    name: "Zendo",
-    nim: "12345678",
-    program: "Magister Ilmu Komputer",
-    semester: 2,
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const menuItems = [
@@ -73,19 +74,15 @@ export default function Index() {
         <View className="bg-gray-700 rounded-lg p-4 mb-6">
           <View className="flex-row items-center">
             <View className="h-16 w-16 bg-indigo-600 rounded-full items-center justify-center mr-4">
-              <Text className="text-white text-2xl font-bold">Z</Text>
+              <Text className="text-white text-2xl font-bold">
+                {user?.full_name ? user.full_name[0].toUpperCase() : "Z"}
+              </Text>
             </View>
             <View className="flex-1">
               <Text className="text-white text-lg font-bold">
-                {userProfile.name}
+                {user?.full_name}
               </Text>
-              <Text className="text-gray-400">{userProfile.nim}</Text>
-              <Text className="text-gray-400 text-sm">
-                {userProfile.program}
-              </Text>
-              <Text className="text-indigo-400 text-sm">
-                Semester {userProfile.semester}
-              </Text>
+              <Text className="text-gray-400">{user?.email}</Text>
             </View>
           </View>
         </View>
@@ -114,12 +111,15 @@ export default function Index() {
         {/* Logout Button */}
         <Pressable
           className="bg-red-600/20 rounded-lg p-4 mb-6 flex-row items-center"
-          onPress={authContext.logOut}
+          onPress={handleLogout}
+          disabled={isLoading}
         >
           <View className="bg-red-600/20 p-2 rounded-lg w-10 h-10 items-center justify-center mr-3">
             <LogOut size={20} color="#EF4444" />
           </View>
-          <Text className="text-red-500 font-bold">Keluar</Text>
+          <Text className="text-red-500 font-bold">
+            {isLoading ? "Sedang Keluar..." : "Keluar"}
+          </Text>
         </Pressable>
 
         {/* Version Info */}
