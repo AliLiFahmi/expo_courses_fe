@@ -15,6 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import {
   Alert,
+  Animated,
   Modal,
   Pressable,
   ScrollView,
@@ -24,6 +25,171 @@ import {
   View,
 } from "react-native";
 import { useCourse } from "../../../../hooks/useCourse";
+
+// Custom Skeleton Component
+const SkeletonItem = ({ width, height, borderRadius = 4, style = {} }) => {
+  const animatedValue = new Animated.Value(0);
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(animatedValue, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: false,
+        }),
+        Animated.timing(animatedValue, {
+          toValue: 0,
+          duration: 1000,
+          useNativeDriver: false,
+        }),
+      ])
+    );
+
+    animation.start();
+
+    return () => animation.stop();
+  }, []);
+
+  const backgroundColor = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#374151", "#4B5563"],
+  });
+
+  return (
+    <Animated.View
+      style={[
+        {
+          width,
+          height,
+          borderRadius,
+          backgroundColor,
+        },
+        style,
+      ]}
+    />
+  );
+};
+
+// Skeleton Components
+const StatisticsSkeleton = () => (
+  <View className="px-4 pt-4 mb-4">
+    <View className="bg-gray-700 rounded-xl p-5">
+      <SkeletonItem width={150} height={24} style={{ marginBottom: 16 }} />
+
+      <View className="flex flex-row justify-between mb-5">
+        {[1, 2, 3].map((item) => (
+          <View
+            key={item}
+            className="w-[30%] bg-gray-800 rounded-lg p-3 items-center"
+          >
+            <SkeletonItem
+              width={40}
+              height={40}
+              borderRadius={8}
+              style={{ marginBottom: 8 }}
+            />
+            <SkeletonItem width={60} height={12} style={{ marginBottom: 4 }} />
+            <SkeletonItem width={40} height={20} />
+          </View>
+        ))}
+      </View>
+
+      <View className="mb-1">
+        <View className="flex flex-row justify-between mb-1">
+          <SkeletonItem width={100} height={12} />
+          <SkeletonItem width={30} height={12} />
+        </View>
+        <SkeletonItem width="100%" height={8} borderRadius={4} />
+      </View>
+    </View>
+  </View>
+);
+
+const CourseCardSkeleton = () => (
+  <View className="bg-gray-700 rounded-lg p-4 mb-4">
+    <View className="flex flex-row items-center mb-3">
+      <SkeletonItem
+        width={48}
+        height={48}
+        borderRadius={8}
+        style={{ marginRight: 12 }}
+      />
+      <View className="flex-1">
+        <SkeletonItem width="80%" height={20} style={{ marginBottom: 4 }} />
+        <SkeletonItem width="60%" height={14} />
+      </View>
+      <View className="flex-row items-center">
+        <SkeletonItem
+          width={60}
+          height={32}
+          borderRadius={8}
+          style={{ marginRight: 8 }}
+        />
+        <SkeletonItem width={32} height={32} borderRadius={8} />
+      </View>
+    </View>
+
+    <View className="mb-3">
+      <View className="flex flex-row justify-between mb-1">
+        <SkeletonItem width={120} height={12} />
+        <SkeletonItem width={30} height={12} />
+      </View>
+      <SkeletonItem width="100%" height={8} borderRadius={4} />
+    </View>
+
+    <View className="flex flex-row justify-between border-t border-gray-600 pt-3">
+      <SkeletonItem width={100} height={14} />
+      <SkeletonItem width={120} height={14} />
+    </View>
+
+    <View className="flex flex-row flex-wrap mt-3">
+      <SkeletonItem
+        width={80}
+        height={24}
+        borderRadius={4}
+        style={{ marginRight: 8, marginBottom: 4 }}
+      />
+      <SkeletonItem
+        width={100}
+        height={24}
+        borderRadius={4}
+        style={{ marginRight: 8, marginBottom: 4 }}
+      />
+      <SkeletonItem width={70} height={24} borderRadius={4} />
+    </View>
+  </View>
+);
+
+const SearchBarSkeleton = () => (
+  <View className="flex flex-row px-4 mb-4">
+    <SkeletonItem
+      width="85%"
+      height={48}
+      borderRadius={12}
+      style={{ marginRight: 8 }}
+    />
+    <SkeletonItem width={48} height={48} borderRadius={12} />
+  </View>
+);
+
+const FiltersSkeleton = () => (
+  <ScrollView
+    horizontal
+    showsHorizontalScrollIndicator={false}
+    className="mb-4 px-4"
+  >
+    {[1, 2, 3, 4, 5].map((item) => (
+      <SkeletonItem
+        key={item}
+        width={80}
+        height={32}
+        borderRadius={16}
+        style={{ marginRight: 8 }}
+      />
+    ))}
+  </ScrollView>
+);
 
 export default function Index() {
   const [searchText, setSearchText] = useState("");
@@ -162,15 +328,6 @@ export default function Index() {
     (a, b) => b.semester - a.semester
   );
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <View className="flex-1 bg-gray-900 justify-center items-center">
-        <Text className="text-white text-lg">Memuat data...</Text>
-      </View>
-    );
-  }
-
   return (
     <View className="flex-1 flex flex-col bg-gray-900">
       {/* Header Area */}
@@ -188,105 +345,127 @@ export default function Index() {
         className="flex-1 bg-gray-800 rounded-t-3xl"
         showsVerticalScrollIndicator={false}
       >
-        <View className="px-4 pt-4 mb-4">
-          <View className="bg-gray-700 rounded-xl p-5">
-            <Text className="text-white text-lg font-bold mb-4">
-              Statistik Akademik
-            </Text>
+        {/* Statistics Section */}
+        {isLoading ? (
+          <StatisticsSkeleton />
+        ) : (
+          <View className="px-4 pt-4 mb-4">
+            <View className="bg-gray-700 rounded-xl p-5">
+              <Text className="text-white text-lg font-bold mb-4">
+                Statistik Akademik
+              </Text>
 
-            <View className="flex flex-row justify-between mb-5">
-              <View className="w-[30%] bg-gray-800 rounded-lg p-3 items-center">
-                <View className="bg-indigo-600/20 p-2 rounded-lg w-10 h-10 items-center justify-center mb-2">
-                  <BookOpen size={18} color="#818CF8" />
+              <View className="flex flex-row justify-between mb-5">
+                <View className="w-[30%] bg-gray-800 rounded-lg p-3 items-center">
+                  <View className="bg-indigo-600/20 p-2 rounded-lg w-10 h-10 items-center justify-center mb-2">
+                    <BookOpen size={18} color="#818CF8" />
+                  </View>
+                  <Text className="text-indigo-400 text-xs mb-1">
+                    Mata Kuliah
+                  </Text>
+                  <Text className="text-white text-lg font-bold">
+                    {formattedCourses.length}
+                  </Text>
                 </View>
-                <Text className="text-indigo-400 text-xs mb-1">
-                  Mata Kuliah
-                </Text>
-                <Text className="text-white text-lg font-bold">
-                  {formattedCourses.length}
-                </Text>
-              </View>
 
-              <View className="w-[30%] bg-gray-800 rounded-lg p-3 items-center">
-                <View className="bg-green-600/20 p-2 rounded-lg w-10 h-10 items-center justify-center mb-2">
-                  <GraduationCap size={18} color="#4ADE80" />
+                <View className="w-[30%] bg-gray-800 rounded-lg p-3 items-center">
+                  <View className="bg-green-600/20 p-2 rounded-lg w-10 h-10 items-center justify-center mb-2">
+                    <GraduationCap size={18} color="#4ADE80" />
+                  </View>
+                  <Text className="text-green-400 text-xs mb-1">Total SKS</Text>
+                  <Text className="text-white text-lg font-bold">
+                    {totalCredits}
+                  </Text>
                 </View>
-                <Text className="text-green-400 text-xs mb-1">Total SKS</Text>
-                <Text className="text-white text-lg font-bold">
-                  {totalCredits}
-                </Text>
-              </View>
 
-              <View className="w-[30%] bg-gray-800 rounded-lg p-3 items-center">
-                <View className="bg-purple-600/20 p-2 rounded-lg w-10 h-10 items-center justify-center mb-2">
-                  <Calendar size={18} color="#C084FC" />
+                <View className="w-[30%] bg-gray-800 rounded-lg p-3 items-center">
+                  <View className="bg-purple-600/20 p-2 rounded-lg w-10 h-10 items-center justify-center mb-2">
+                    <Calendar size={18} color="#C084FC" />
+                  </View>
+                  <Text className="text-purple-400 text-xs mb-1">Semester</Text>
+                  <Text className="text-white text-lg font-bold">
+                    Ganjil 2024
+                  </Text>
                 </View>
-                <Text className="text-purple-400 text-xs mb-1">Semester</Text>
-                <Text className="text-white text-lg font-bold">
-                  Ganjil 2024
-                </Text>
               </View>
-            </View>
 
-            {/* Progress Bar */}
-            <View className="mb-1">
-              <View className="flex flex-row justify-between mb-1">
-                <Text className="text-gray-400 text-xs">Progress Semester</Text>
-                <Text className="text-gray-400 text-xs">75%</Text>
-              </View>
-              <View className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
-                <View className="w-3/4 h-full bg-indigo-500 rounded-full" />
+              {/* Progress Bar */}
+              <View className="mb-1">
+                <View className="flex flex-row justify-between mb-1">
+                  <Text className="text-gray-400 text-xs">
+                    Progress Semester
+                  </Text>
+                  <Text className="text-gray-400 text-xs">75%</Text>
+                </View>
+                <View className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                  <View className="w-3/4 h-full bg-indigo-500 rounded-full" />
+                </View>
               </View>
             </View>
           </View>
-        </View>
+        )}
 
         {/* Search Bar */}
-        <View className="flex flex-row px-4 mb-4">
-          <View className="flex-1 flex flex-row items-center bg-gray-700/50 backdrop-blur-lg rounded-xl p-3 mr-2 border border-gray-600/50">
-            <Search size={20} color="#E5E7EB" />
-            <TextInput
-              className="flex-1 text-gray-100 ml-2 leading-6 py-0"
-              placeholder="Cari mata kuliah..."
-              placeholderTextColor="#9CA3AF"
-              value={searchText}
-              onChangeText={setSearchText}
-              style={{ height: 24 }}
-            />
+        {isLoading ? (
+          <SearchBarSkeleton />
+        ) : (
+          <View className="flex flex-row px-4 mb-4">
+            <View className="flex-1 flex flex-row items-center bg-gray-700/50 backdrop-blur-lg rounded-xl p-3 mr-2 border border-gray-600/50">
+              <Search size={20} color="#E5E7EB" />
+              <TextInput
+                className="flex-1 text-gray-100 ml-2 leading-6 py-0"
+                placeholder="Cari mata kuliah..."
+                placeholderTextColor="#9CA3AF"
+                value={searchText}
+                onChangeText={setSearchText}
+                style={{ height: 24 }}
+              />
+            </View>
+            <Pressable className="bg-indigo-500/30 backdrop-blur-lg p-3 rounded-xl border border-indigo-500/50">
+              <SlidersHorizontal size={20} color="#A5B4FC" />
+            </Pressable>
           </View>
-          <Pressable className="bg-indigo-500/30 backdrop-blur-lg p-3 rounded-xl border border-indigo-500/50">
-            <SlidersHorizontal size={20} color="#A5B4FC" />
-          </Pressable>
-        </View>
+        )}
 
         {/* Filter Categories */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className="mb-4 px-4"
-        >
-          {filters.map((filter) => (
-            <Pressable
-              key={filter}
-              className={`px-4 py-2 rounded-full mr-2 ${
-                activeFilter === filter ? "bg-indigo-600" : "bg-gray-700"
-              }`}
-              onPress={() => setActiveFilter(filter)}
-            >
-              <Text
-                className={`${
-                  activeFilter === filter ? "text-white" : "text-gray-400"
-                } font-medium`}
+        {isLoading ? (
+          <FiltersSkeleton />
+        ) : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            className="mb-4 px-4"
+          >
+            {filters.map((filter) => (
+              <Pressable
+                key={filter}
+                className={`px-4 py-2 rounded-full mr-2 ${
+                  activeFilter === filter ? "bg-indigo-600" : "bg-gray-700"
+                }`}
+                onPress={() => setActiveFilter(filter)}
               >
-                {filter}
-              </Text>
-            </Pressable>
-          ))}
-        </ScrollView>
+                <Text
+                  className={`${
+                    activeFilter === filter ? "text-white" : "text-gray-400"
+                  } font-medium`}
+                >
+                  {filter}
+                </Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        )}
 
         {/* Course List */}
         <View className="px-4 mb-24">
-          {sortedCourses.length > 0 ? (
+          {isLoading ? (
+            // Loading skeletons
+            <>
+              {[1, 2, 3, 4].map((item) => (
+                <CourseCardSkeleton key={item} />
+              ))}
+            </>
+          ) : sortedCourses.length > 0 ? (
             sortedCourses.map((course) => (
               <View key={course.id} className="bg-gray-700 rounded-lg p-4 mb-4">
                 {/* Header dengan tombol aksi */}

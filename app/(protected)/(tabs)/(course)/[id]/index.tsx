@@ -13,6 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import {
   Alert,
+  Animated,
   Modal,
   Pressable,
   RefreshControl,
@@ -23,6 +24,176 @@ import {
 } from "react-native";
 import { useCourse } from "../../../../../hooks/useCourse";
 import { useTask } from "../../../../../hooks/useTask";
+
+// Skeleton Loading Component
+const SkeletonLoader = ({ width, height, borderRadius = 4, style = {} }) => {
+  const animatedValue = new Animated.Value(0);
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(animatedValue, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: false,
+        }),
+        Animated.timing(animatedValue, {
+          toValue: 0,
+          duration: 1000,
+          useNativeDriver: false,
+        }),
+      ])
+    );
+
+    animation.start();
+
+    return () => animation.stop();
+  }, []);
+
+  const backgroundColor = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#374151", "#4B5563"],
+  });
+
+  return (
+    <Animated.View
+      style={[
+        {
+          width,
+          height,
+          borderRadius,
+          backgroundColor,
+        },
+        style,
+      ]}
+    />
+  );
+};
+
+// Header Skeleton
+const HeaderSkeleton = () => (
+  <View className="pt-8 px-4 pb-4 flex flex-row items-center">
+    <View className="mr-3 p-2 bg-indigo-500/30 backdrop-blur-lg rounded-xl border border-indigo-500/50 w-11 h-11">
+      <ChevronLeft size={20} color="#A5B4FC" />
+    </View>
+    <View className="flex-1">
+      <SkeletonLoader
+        width="70%"
+        height={24}
+        borderRadius={6}
+        style={{ marginBottom: 8 }}
+      />
+      <SkeletonLoader width="50%" height={16} borderRadius={4} />
+    </View>
+  </View>
+);
+
+// Course Info Skeleton
+const CourseInfoSkeleton = () => (
+  <View className="mx-4 mb-4">
+    <View className="bg-indigo-900/40 backdrop-blur-lg rounded-2xl p-4 border border-indigo-800/50">
+      <SkeletonLoader width="60%" height={20} style={{ marginBottom: 12 }} />
+      <SkeletonLoader width="100%" height={16} style={{ marginBottom: 8 }} />
+      <SkeletonLoader width="80%" height={16} style={{ marginBottom: 16 }} />
+      <View className="flex-row">
+        <SkeletonLoader
+          width={100}
+          height={28}
+          borderRadius={8}
+          style={{ marginRight: 8 }}
+        />
+        <SkeletonLoader width={120} height={28} borderRadius={8} />
+      </View>
+    </View>
+  </View>
+);
+
+// Statistics Skeleton
+const StatisticsSkeleton = () => (
+  <View className="mx-4 mb-4">
+    <View className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-4 border border-gray-700/50">
+      <SkeletonLoader width="50%" height={20} style={{ marginBottom: 16 }} />
+      <View className="flex-row justify-between">
+        {[1, 2, 3, 4].map((item) => (
+          <View key={item} className="items-center">
+            <SkeletonLoader
+              width={40}
+              height={32}
+              style={{ marginBottom: 8 }}
+            />
+            <SkeletonLoader width={50} height={14} />
+          </View>
+        ))}
+      </View>
+    </View>
+  </View>
+);
+
+// Task Item Skeleton
+const TaskItemSkeleton = () => (
+  <View className="backdrop-blur-lg rounded-2xl p-5 border bg-indigo-900/30 border-indigo-800/50 shadow-lg mb-4">
+    {/* Header */}
+    <View className="flex-row justify-between items-start mb-3">
+      <View className="flex-1 mr-3">
+        <SkeletonLoader width="80%" height={20} style={{ marginBottom: 8 }} />
+      </View>
+      <View className="flex-row items-center space-x-2">
+        <SkeletonLoader width={70} height={24} borderRadius={12} />
+        <SkeletonLoader width={32} height={32} borderRadius={6} />
+      </View>
+    </View>
+
+    {/* Description */}
+    <SkeletonLoader width="100%" height={16} style={{ marginBottom: 8 }} />
+    <SkeletonLoader width="70%" height={16} style={{ marginBottom: 16 }} />
+
+    {/* Info rows */}
+    <View className="space-y-2">
+      <View className="flex-row items-center">
+        <Clock size={16} color="#A5B4FC" />
+        <SkeletonLoader width="60%" height={14} style={{ marginLeft: 8 }} />
+      </View>
+      <View className="flex-row items-center">
+        <Calendar size={16} color="#A5B4FC" />
+        <SkeletonLoader width="50%" height={14} style={{ marginLeft: 8 }} />
+      </View>
+      <View className="flex-row items-center">
+        <FileText size={16} color="#A5B4FC" />
+        <SkeletonLoader width="40%" height={14} style={{ marginLeft: 8 }} />
+      </View>
+    </View>
+  </View>
+);
+
+// Task List Skeleton
+const TaskListSkeleton = () => (
+  <ScrollView className="flex-1 px-4 pt-2">
+    <View className="mb-24">
+      {[1, 2, 3].map((item) => (
+        <TaskItemSkeleton key={item} />
+      ))}
+    </View>
+  </ScrollView>
+);
+
+// Main Loading Skeleton Component
+const LoadingSkeleton = () => (
+  <View className="flex-1 bg-gray-900">
+    <LinearGradient
+      colors={["#1E1B4B", "#312E81", "#1E1B4B"]}
+      className="absolute w-full h-full"
+    />
+    <HeaderSkeleton />
+    <CourseInfoSkeleton />
+    <StatisticsSkeleton />
+    <TaskListSkeleton />
+
+    {/* Floating Action Button Skeleton */}
+    <View className="absolute bottom-8 right-6 bg-indigo-500/50 w-16 h-16 rounded-2xl items-center justify-center shadow-2xl border border-indigo-400/50">
+      <Plus size={28} color="#FFFFFF" opacity={0.5} />
+    </View>
+  </View>
+);
 
 export default function CourseDetail() {
   const { id } = useLocalSearchParams();
@@ -183,17 +354,9 @@ export default function CourseDetail() {
     return deadlineDate < now;
   };
 
-  // Loading state
+  // Loading state - Show skeleton
   if (tasksLoading || courseLoading) {
-    return (
-      <View className="flex-1 bg-gray-900 justify-center items-center">
-        <LinearGradient
-          colors={["#1E1B4B", "#312E81", "#1E1B4B"]}
-          className="absolute w-full h-full"
-        />
-        <Text className="text-white text-lg">Memuat data...</Text>
-      </View>
-    );
+    return <LoadingSkeleton />;
   }
 
   return (
