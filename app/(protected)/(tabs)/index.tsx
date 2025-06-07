@@ -129,7 +129,7 @@ export default function Index() {
             <View>
               <Text className="text-white text-3xl font-bold mb-1">Zendo</Text>
               <Text className="text-gray-400">
-                Selamat datang kembali, Mahasiswa!
+                Hai, {user?.full_name || "Mahasiswa"} 👋
               </Text>
             </View>
           </View>
