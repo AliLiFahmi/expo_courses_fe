@@ -227,9 +227,8 @@ export default function Index() {
   // Fungsi untuk edit course
   const handleEditCourse = () => {
     setShowActionModal(false);
-    if (selectedCourse) {
-      router.push(`/modal-course?courseId=${selectedCourse.id}`);
-    }
+    const course = selectedCourse;
+    router.push(`/modal-course?courseId=${course.id}`);
   };
 
   // Fungsi untuk delete course
@@ -678,9 +677,7 @@ export default function Index() {
               onPress={handleEditCourse}
             >
               <Edit3 size={20} color="#A5B4FC" />
-              <Text className="text-indigo-200 ml-3 font-medium">
-                Edit Mata Kuliah
-              </Text>
+              <Text className="text-indigo-200 ml-3 font-medium">Edit</Text>
             </Pressable>
 
             <Pressable
@@ -688,9 +685,7 @@ export default function Index() {
               onPress={handleDeleteCourse}
             >
               <Trash2 size={20} color="#F87171" />
-              <Text className="text-red-300 ml-3 font-medium">
-                Hapus Mata Kuliah
-              </Text>
+              <Text className="text-red-300 ml-3 font-medium">Hapus</Text>
             </Pressable>
 
             <Pressable

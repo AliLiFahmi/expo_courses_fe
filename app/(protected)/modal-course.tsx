@@ -1,19 +1,57 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { X } from "lucide-react-native";
-import { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { useState, useEffect } from "react";
+import {
+  Alert,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { useCourse } from "../../hooks/useCourse";
 
 export default function ModalAdd() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    deadline: "",
+    class_name: "",
   });
 
-  const handleSubmit = () => {
-    // Implementasi logika penambahan tugas di sini
-    console.log("Tugas baru:", formData);
-    router.back();
+  const { courseId } = useLocalSearchParams();
+  const { getCourseById, createCourse, updateCourse } = useCourse();
+
+  useEffect(() => {
+    if (courseId) {
+      const fetchCourseData = async () => {
+        try {
+          const course = await getCourseById(courseId);
+          setFormData({
+            title: course.title || "",
+            description: course.description || "",
+            class_name: course.class_name || "",
+          });
+        } catch (err) {
+          console.error("Error fetching course data:", err);
+        }
+      };
+      fetchCourseData();
+    }
+  }, [courseId]);
+
+  const handleSubmit = async () => {
+    try {
+      if (courseId) {
+        await updateCourse(courseId, formData);
+        Alert.alert("Sukses", "Tugas berhasil diperbarui");
+      } else {
+        await createCourse(formData);
+        Alert.alert("Sukses", "Tugas berhasil ditambahkan");
+      }
+      router.back();
+    } catch (err) {
+      Alert.alert("Gagal", "Terjadi kesalahan saat menyimpan tugas");
+      console.error("Error saving course:", err);
+    }
   };
 
   return (
@@ -22,7 +60,7 @@ export default function ModalAdd() {
         {/* Header */}
         <View className="flex-row justify-between items-center mb-6">
           <Text className="text-white text-xl font-bold">
-            Tambah Tugas Baru
+            {courseId ? "Edit Tugas" : "Tambah Tugas Baru"}
           </Text>
           <Pressable onPress={() => router.back()}>
             <X size={24} color="#9CA3AF" />
@@ -58,14 +96,14 @@ export default function ModalAdd() {
           </View>
 
           <View>
-            <Text className="text-gray-400 mb-2">Deadline</Text>
+            <Text className="text-gray-400 mb-2">Semester / Kelas</Text>
             <TextInput
               className="bg-gray-700 text-white px-4 py-3 rounded-lg"
-              placeholder="YYYY-MM-DD"
+              placeholder="Masukkan nama kelas"
               placeholderTextColor="#6B7280"
-              value={formData.deadline}
+              value={formData.class_name}
               onChangeText={(text) =>
-                setFormData({ ...formData, deadline: text })
+                setFormData({ ...formData, class_name: text })
               }
             />
           </View>
@@ -76,7 +114,9 @@ export default function ModalAdd() {
           className="bg-indigo-600 py-3 rounded-lg mt-6"
           onPress={handleSubmit}
         >
-          <Text className="text-white text-center font-bold">Simpan Tugas</Text>
+          <Text className="text-white text-center font-bold">
+            {courseId ? "Perbarui Tugas" : "Simpan Tugas"}
+          </Text>
         </Pressable>
       </View>
     </View>
