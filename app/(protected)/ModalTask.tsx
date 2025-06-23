@@ -1,131 +1,348 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import { X, Calendar } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-  Platform,
+  Alert,
+  Pressable,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
+  ScrollView,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useTask } from "../../hooks/useTask";
+import { useCourse } from "../../hooks/useCourse";
 
 export default function ModalTask() {
-  const { id, course_id } = useLocalSearchParams<{
-    id: string;
-    course_id: string;
-  }>();
-  const router = useRouter();
-  const { createTask, updateTask, getTaskById } = useTask();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [deadline, setDeadline] = useState(new Date());
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    deadline: "",
+    course_id: "",
+  });
+
+  const [courses, setCourses] = useState([]);
+  const [showCoursePicker, setShowCoursePicker] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  const { taskId } = useLocalSearchParams();
+  const { getTaskById, createTask, updateTask } = useTask();
+  const { getCourses } = useCourse();
+
   useEffect(() => {
-    if (id) {
-      getTaskById(id).then((task) => {
-        setTitle(task.title);
-        setDescription(task.description);
-        setDeadline(new Date(task.deadline));
-      });
+    // Load courses for dropdown
+    const fetchCourses = async () => {
+      try {
+        const coursesData = await getCourses();
+        setCourses(coursesData);
+      } catch (err) {
+        console.error("Error fetching courses:", err);
+      }
+    };
+    fetchCourses();
+
+    // Load task data if editing
+    if (taskId) {
+      const fetchTaskData = async () => {
+        try {
+          const task = await getTaskById(taskId);
+          setFormData({
+            title: task.title || "",
+            description: task.description || "",
+            deadline: task.deadline || "",
+            course_id: task.course_id || "",
+          });
+        } catch (err) {
+          console.error("Error fetching task data:", err);
+        }
+      };
+      fetchTaskData();
     }
-  }, [id]);
+  }, [taskId]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  const getSelectedCourseName = () => {
+    const selectedCourse = courses.find(
+      (course) => course.id === formData.course_id
+    );
+    return selectedCourse ? selectedCourse.title : "Pilih Mata Kuliah";
+  };
 
   const handleSubmit = async () => {
+    // Validation
+    if (!formData.title.trim()) {
+      Alert.alert("Error", "Judul task tidak boleh kosong");
+      return;
+    }
+    if (!formData.course_id) {
+      Alert.alert("Error", "Pilih mata kuliah terlebih dahulu");
+      return;
+    }
+    if (!formData.deadline) {
+      Alert.alert("Error", "Deadline tidak boleh kosong");
+      return;
+    }
+
     try {
-      if (id) {
-        await updateTask(id, {
-          title,
-          description,
-          deadline: deadline.toISOString(),
-        });
+      if (taskId) {
+        await updateTask(taskId, formData);
+        Alert.alert("Sukses", "Task berhasil diperbarui");
       } else {
-        await createTask({
-          title,
-          description,
-          deadline: deadline.toISOString(),
-          course_id: course_id,
-        });
+        await createTask(formData);
+        Alert.alert("Sukses", "Task berhasil ditambahkan");
       }
       router.back();
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      Alert.alert("Gagal", "Terjadi kesalahan saat menyimpan task");
+      console.error("Error saving task:", err);
+    }
+  };
+
+  const handleDateInput = (text) => {
+    // Simple date formatting as user types (DD/MM/YYYY)
+    let formattedText = text.replace(/\D/g, "");
+    if (formattedText.length >= 2) {
+      formattedText =
+        formattedText.substring(0, 2) + "/" + formattedText.substring(2);
+    }
+    if (formattedText.length >= 5) {
+      formattedText =
+        formattedText.substring(0, 5) + "/" + formattedText.substring(5, 9);
+    }
+
+    // Convert to ISO format for backend (YYYY-MM-DD)
+    if (formattedText.length === 10) {
+      const [day, month, year] = formattedText.split("/");
+      const isoDate = `${year}-${month.padStart(2, "0")}-${day.padStart(
+        2,
+        "0"
+      )}`;
+      setFormData({ ...formData, deadline: isoDate });
+    } else {
+      setFormData({ ...formData, deadline: formattedText });
     }
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gradient-to-b from-blue-50 to-blue-100">
-      <View className="flex-1 p-4">
-        <View className="space-y-6 bg-white rounded-2xl shadow-lg p-5 mx-2">
-          <Text className="text-2xl font-bold text-gray-800">
-            {id ? "Edit Task" : "Create Task"}
-          </Text>
+    <View
+      className="flex-1 justify-center items-center p-8"
+      style={{
+        backgroundColor: "rgba(17, 24, 39, 0.95)",
+        backdropFilter: "blur(20px)",
+      }}
+    >
+      <ScrollView
+        className="w-full max-w-sm"
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <View className="flex-row justify-between items-center mb-8">
+          <View>
+            <Text className="text-white text-2xl font-bold tracking-tight">
+              {taskId ? "Edit Task" : "Buat Task"}
+            </Text>
+            <View
+              className="h-1 rounded-full mt-2"
+              style={{
+                width: 40,
+                background: "linear-gradient(90deg, #4F46E5, #3B82F6)",
+                backgroundColor: "#4F46E5",
+              }}
+            />
+          </View>
+          <Pressable
+            onPress={() => router.back()}
+            className="p-2 rounded-full"
+            style={{ backgroundColor: "rgba(75, 85, 99, 0.3)" }}
+          >
+            <X size={20} color="#E5E7EB" />
+          </Pressable>
+        </View>
 
-          <View className="space-y-2">
-            <Text className="text-gray-600 font-medium">Title</Text>
+        {/* Form Fields */}
+        <View className="space-y-6">
+          {/* Title Field */}
+          <View>
+            <Text className="text-gray-300 text-sm font-medium mb-3 tracking-wide">
+              JUDUL TASK
+            </Text>
             <TextInput
-              className="bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200"
-              value={title}
-              onChangeText={setTitle}
-              placeholder="Enter task title"
-              placeholderTextColor="#9CA3AF"
+              className="text-white text-base rounded-2xl px-5 py-4"
+              style={{
+                backgroundColor: "rgba(56, 67, 82, 0.8)",
+                borderWidth: 0,
+                outline: "none",
+              }}
+              placeholder="Masukkan judul task..."
+              placeholderTextColor="#6B7280"
+              value={formData.title}
+              onChangeText={(text) => setFormData({ ...formData, title: text })}
             />
           </View>
 
-          <View className="space-y-2">
-            <Text className="text-gray-600 font-medium">Description</Text>
+          {/* Description Field */}
+          <View>
+            <Text className="text-gray-300 text-sm font-medium mb-3 tracking-wide">
+              DESKRIPSI
+            </Text>
             <TextInput
-              className="bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200"
-              value={description}
-              onChangeText={setDescription}
-              placeholder="Enter task description"
-              placeholderTextColor="#9CA3AF"
+              className="text-white text-base rounded-2xl px-5 py-4"
+              style={{
+                backgroundColor: "rgba(56, 67, 82, 0.8)",
+                borderWidth: 0,
+                outline: "none",
+                textAlignVertical: "top",
+                minHeight: 100,
+              }}
+              placeholder="Jelaskan detail task..."
+              placeholderTextColor="#6B7280"
               multiline
-              numberOfLines={4}
+              value={formData.description}
+              onChangeText={(text) =>
+                setFormData({ ...formData, description: text })
+              }
             />
           </View>
 
-          <View className="space-y-2">
-            <Text className="text-gray-600 font-medium">Deadline</Text>
-            <TouchableOpacity
-              className="bg-gray-50 border border-gray-200 rounded-xl p-3 active:bg-gray-100 transition duration-200"
-              onPress={() => setShowDatePicker(true)}
+          {/* Course Selection */}
+          <View>
+            <Text className="text-gray-300 text-sm font-medium mb-3 tracking-wide">
+              MATA KULIAH
+            </Text>
+            <Pressable
+              className="rounded-2xl px-5 py-4"
+              style={{
+                backgroundColor: "rgba(56, 67, 82, 0.8)",
+                borderWidth: 0,
+              }}
+              onPress={() => setShowCoursePicker(!showCoursePicker)}
             >
-              <Text className="text-gray-800">
-                {deadline.toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+              <Text
+                className="text-base"
+                style={{
+                  color: formData.course_id ? "#FFFFFF" : "#6B7280",
+                }}
+              >
+                {getSelectedCourseName()}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
+
+            {showCoursePicker && (
+              <View
+                className="mt-2 rounded-2xl overflow-hidden"
+                style={{ backgroundColor: "rgba(56, 67, 82, 0.9)" }}
+              >
+                {courses.map((course) => (
+                  <Pressable
+                    key={course.id}
+                    className="px-5 py-3 border-b border-gray-600"
+                    onPress={() => {
+                      setFormData({ ...formData, course_id: course.id });
+                      setShowCoursePicker(false);
+                    }}
+                    style={{
+                      backgroundColor:
+                        formData.course_id === course.id
+                          ? "rgba(59, 130, 246, 0.2)"
+                          : "transparent",
+                    }}
+                  >
+                    <Text className="text-white text-base">{course.title}</Text>
+                    <Text className="text-gray-400 text-sm mt-1">
+                      {course.class_name}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            )}
+          </View>
+
+          {/* Deadline Field */}
+          <View>
+            <Text className="text-gray-300 text-sm font-medium mb-3 tracking-wide">
+              DEADLINE
+            </Text>
+            <Pressable
+              onPress={() => setShowDatePicker(true)}
+              className="rounded-2xl px-5 py-4"
+              style={{
+                backgroundColor: "rgba(56, 67, 82, 0.8)",
+                borderWidth: 0,
+              }}
+            >
+              <View className="flex-row justify-between items-center">
+                <Text
+                  className="text-base"
+                  style={{
+                    color: formData.deadline ? "#FFFFFF" : "#6B7280",
+                  }}
+                >
+                  {formData.deadline
+                    ? formatDate(formData.deadline)
+                    : "Pilih Tanggal Deadline"}
+                </Text>
+                <Calendar size={20} color="#6B7280" />
+              </View>
+            </Pressable>
+
             {showDatePicker && (
               <DateTimePicker
-                value={deadline}
+                value={
+                  formData.deadline ? new Date(formData.deadline) : new Date()
+                }
                 mode="date"
-                display={Platform.OS === "ios" ? "inline" : "default"}
+                display="default"
                 onChange={(event, selectedDate) => {
                   setShowDatePicker(false);
                   if (selectedDate) {
-                    setDeadline(selectedDate);
+                    const isoDate = selectedDate.toISOString().split("T")[0]; // YYYY-MM-DD
+                    setFormData({ ...formData, deadline: isoDate });
                   }
                 }}
               />
             )}
           </View>
-
-          <TouchableOpacity
-            className="bg-blue-600 rounded-xl p-4 items-center active:bg-blue-700 transition duration-200 shadow-md"
-            onPress={handleSubmit}
-          >
-            <Text className="text-white text-lg font-semibold">
-              {id ? "Update Task" : "Create Task"}
-            </Text>
-          </TouchableOpacity>
         </View>
-      </View>
-    </SafeAreaView>
+
+        {/* Submit Button */}
+        <Pressable
+          className="py-4 rounded-2xl mt-8 mb-6"
+          style={{
+            background: "linear-gradient(135deg, #4F46E5, #3B82F6)",
+            backgroundColor: "#4F46E5",
+            shadowColor: "#4F46E5",
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.3,
+            shadowRadius: 16,
+            elevation: 8,
+          }}
+          onPress={handleSubmit}
+        >
+          <Text className="text-white text-center font-bold text-lg tracking-wide">
+            {taskId ? "Perbarui Task" : "Simpan Task"}
+          </Text>
+        </Pressable>
+
+        {/* Footer */}
+        <View className="items-center mb-4">
+          <View
+            className="h-1 rounded-full"
+            style={{
+              width: 60,
+              backgroundColor: "rgba(75, 85, 99, 0.4)",
+            }}
+          />
+        </View>
+      </ScrollView>
+    </View>
   );
 }

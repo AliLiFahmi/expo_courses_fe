@@ -92,14 +92,6 @@ const StatisticsSkeleton = () => (
           </View>
         ))}
       </View>
-
-      <View className="mb-1">
-        <View className="flex flex-row justify-between mb-1">
-          <SkeletonItem width={100} height={12} />
-          <SkeletonItem width={30} height={12} />
-        </View>
-        <SkeletonItem width="100%" height={8} borderRadius={4} />
-      </View>
     </View>
   </View>
 );
@@ -171,24 +163,6 @@ const SearchBarSkeleton = () => (
   </View>
 );
 
-const FiltersSkeleton = () => (
-  <ScrollView
-    horizontal
-    showsHorizontalScrollIndicator={false}
-    className="mb-4 px-4"
-  >
-    {[1, 2, 3, 4, 5].map((item) => (
-      <SkeletonItem
-        key={item}
-        width={80}
-        height={32}
-        borderRadius={16}
-        style={{ marginRight: 8 }}
-      />
-    ))}
-  </ScrollView>
-);
-
 export default function Index() {
   const [searchText, setSearchText] = useState("");
   const [activeFilter, setActiveFilter] = useState("Semua");
@@ -226,7 +200,7 @@ export default function Index() {
   const handleEditCourse = () => {
     setShowActionModal(false);
     const course = selectedCourse;
-    router.push(`/modal-course?courseId=${course.id}`);
+    router.push(`/ModalCourse?courseId=${course.id}`);
   };
 
   // Fungsi untuk delete course
@@ -422,35 +396,6 @@ export default function Index() {
               <SlidersHorizontal size={20} color="#A5B4FC" />
             </Pressable>
           </View>
-        )}
-
-        {/* Filter Categories */}
-        {isLoading ? (
-          <FiltersSkeleton />
-        ) : (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            className="mb-4 px-4"
-          >
-            {filters.map((filter) => (
-              <Pressable
-                key={filter}
-                className={`px-4 py-2 rounded-full mr-2 ${
-                  activeFilter === filter ? "bg-indigo-600" : "bg-gray-700"
-                }`}
-                onPress={() => setActiveFilter(filter)}
-              >
-                <Text
-                  className={`${
-                    activeFilter === filter ? "text-white" : "text-gray-400"
-                  } font-medium`}
-                >
-                  {filter}
-                </Text>
-              </Pressable>
-            ))}
-          </ScrollView>
         )}
 
         {/* Course List */}

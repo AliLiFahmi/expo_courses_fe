@@ -1,132 +1,57 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { X, Calendar } from "lucide-react-native";
+import { X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
   Alert,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
   View,
-  ScrollView,
 } from "react-native";
-import { useTask } from "../../hooks/useTask";
 import { useCourse } from "../../hooks/useCourse";
 
-export default function ModalTask() {
+export default function ModalAdd() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    deadline: "",
-    course_id: "",
+    class_name: "",
   });
 
-  const [courses, setCourses] = useState([]);
-  const [showCoursePicker, setShowCoursePicker] = useState(false);
-
-  const { taskId } = useLocalSearchParams();
-  const { getTaskById, createTask, updateTask } = useTask();
-  const { getCourses } = useCourse();
+  const { courseId } = useLocalSearchParams();
+  const { getCourseById, createCourse, updateCourse } = useCourse();
 
   useEffect(() => {
-    // Load courses for dropdown
-    const fetchCourses = async () => {
-      try {
-        const coursesData = await getCourses();
-        setCourses(coursesData);
-      } catch (err) {
-        console.error("Error fetching courses:", err);
-      }
-    };
-    fetchCourses();
-
-    // Load task data if editing
-    if (taskId) {
-      const fetchTaskData = async () => {
+    if (courseId) {
+      const fetchCourseData = async () => {
         try {
-          const task = await getTaskById(taskId);
+          const course = await getCourseById(courseId);
           setFormData({
-            title: task.title || "",
-            description: task.description || "",
-            deadline: task.deadline || "",
-            course_id: task.course_id || "",
+            title: course.title || "",
+            description: course.description || "",
+            class_name: course.class_name || "",
           });
         } catch (err) {
-          console.error("Error fetching task data:", err);
+          console.error("Error fetching course data:", err);
         }
       };
-      fetchTaskData();
+      fetchCourseData();
     }
-  }, [taskId]);
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("id-ID", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
-
-  const getSelectedCourseName = () => {
-    const selectedCourse = courses.find(
-      (course) => course.id === formData.course_id
-    );
-    return selectedCourse ? selectedCourse.title : "Pilih Mata Kuliah";
-  };
+  }, [courseId]);
 
   const handleSubmit = async () => {
-    // Validation
-    if (!formData.title.trim()) {
-      Alert.alert("Error", "Judul task tidak boleh kosong");
-      return;
-    }
-    if (!formData.course_id) {
-      Alert.alert("Error", "Pilih mata kuliah terlebih dahulu");
-      return;
-    }
-    if (!formData.deadline) {
-      Alert.alert("Error", "Deadline tidak boleh kosong");
-      return;
-    }
-
     try {
-      if (taskId) {
-        await updateTask(taskId, formData);
-        Alert.alert("Sukses", "Task berhasil diperbarui");
+      if (courseId) {
+        await updateCourse(courseId, formData);
+        Alert.alert("Sukses", "Tugas berhasil diperbarui");
       } else {
-        await createTask(formData);
-        Alert.alert("Sukses", "Task berhasil ditambahkan");
+        await createCourse(formData);
+        Alert.alert("Sukses", "Tugas berhasil ditambahkan");
       }
       router.back();
     } catch (err) {
-      Alert.alert("Gagal", "Terjadi kesalahan saat menyimpan task");
-      console.error("Error saving task:", err);
-    }
-  };
-
-  const handleDateInput = (text) => {
-    // Simple date formatting as user types (DD/MM/YYYY)
-    let formattedText = text.replace(/\D/g, "");
-    if (formattedText.length >= 2) {
-      formattedText =
-        formattedText.substring(0, 2) + "/" + formattedText.substring(2);
-    }
-    if (formattedText.length >= 5) {
-      formattedText =
-        formattedText.substring(0, 5) + "/" + formattedText.substring(5, 9);
-    }
-
-    // Convert to ISO format for backend (YYYY-MM-DD)
-    if (formattedText.length === 10) {
-      const [day, month, year] = formattedText.split("/");
-      const isoDate = `${year}-${month.padStart(2, "0")}-${day.padStart(
-        2,
-        "0"
-      )}`;
-      setFormData({ ...formData, deadline: isoDate });
-    } else {
-      setFormData({ ...formData, deadline: formattedText });
+      Alert.alert("Gagal", "Terjadi kesalahan saat menyimpan tugas");
+      console.error("Error saving course:", err);
     }
   };
 
@@ -146,14 +71,14 @@ export default function ModalTask() {
         <View className="flex-row justify-between items-center mb-8">
           <View>
             <Text className="text-white text-2xl font-bold tracking-tight">
-              {taskId ? "Edit Task" : "Buat Task"}
+              {courseId ? "Edit Tugas" : "Tambah Tugas"}
             </Text>
             <View
               className="h-1 rounded-full mt-2"
               style={{
                 width: 40,
-                background: "linear-gradient(90deg, #10B981, #3B82F6)",
-                backgroundColor: "#10B981",
+                background: "linear-gradient(90deg, #4F46E5, #3B82F6)",
+                backgroundColor: "#4F46E5",
               }}
             />
           </View>
@@ -171,16 +96,14 @@ export default function ModalTask() {
           {/* Title Field */}
           <View>
             <Text className="text-gray-300 text-sm font-medium mb-3 tracking-wide">
-              JUDUL TASK
+              JUDUL TUGAS
             </Text>
             <TextInput
               className="text-white text-base rounded-2xl px-5 py-4"
               style={{
                 backgroundColor: "rgba(56, 67, 82, 0.8)",
-                borderWidth: 0,
-                outline: "none",
               }}
-              placeholder="Masukkan judul task..."
+              placeholder="Masukkan judul tugas..."
               placeholderTextColor="#6B7280"
               value={formData.title}
               onChangeText={(text) => setFormData({ ...formData, title: text })}
@@ -196,12 +119,10 @@ export default function ModalTask() {
               className="text-white text-base rounded-2xl px-5 py-4"
               style={{
                 backgroundColor: "rgba(56, 67, 82, 0.8)",
-                borderWidth: 0,
-                outline: "none",
                 textAlignVertical: "top",
                 minHeight: 100,
               }}
-              placeholder="Jelaskan detail task..."
+              placeholder="Jelaskan detail tugas..."
               placeholderTextColor="#6B7280"
               multiline
               value={formData.description}
@@ -211,86 +132,23 @@ export default function ModalTask() {
             />
           </View>
 
-          {/* Course Selection */}
+          {/* Class Name Field */}
           <View>
             <Text className="text-gray-300 text-sm font-medium mb-3 tracking-wide">
-              MATA KULIAH
+              SEMESTER / KELAS
             </Text>
-            <Pressable
-              className="rounded-2xl px-5 py-4"
+            <TextInput
+              className="text-white text-base rounded-2xl px-5 py-4"
               style={{
                 backgroundColor: "rgba(56, 67, 82, 0.8)",
-                borderWidth: 0,
               }}
-              onPress={() => setShowCoursePicker(!showCoursePicker)}
-            >
-              <Text
-                className="text-base"
-                style={{
-                  color: formData.course_id ? "#FFFFFF" : "#6B7280",
-                }}
-              >
-                {getSelectedCourseName()}
-              </Text>
-            </Pressable>
-
-            {showCoursePicker && (
-              <View
-                className="mt-2 rounded-2xl overflow-hidden"
-                style={{ backgroundColor: "rgba(56, 67, 82, 0.9)" }}
-              >
-                {courses.map((course) => (
-                  <Pressable
-                    key={course.id}
-                    className="px-5 py-3 border-b border-gray-600"
-                    onPress={() => {
-                      setFormData({ ...formData, course_id: course.id });
-                      setShowCoursePicker(false);
-                    }}
-                    style={{
-                      backgroundColor:
-                        formData.course_id === course.id
-                          ? "rgba(59, 130, 246, 0.2)"
-                          : "transparent",
-                    }}
-                  >
-                    <Text className="text-white text-base">{course.title}</Text>
-                    <Text className="text-gray-400 text-sm mt-1">
-                      {course.class_name}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            )}
-          </View>
-
-          {/* Deadline Field */}
-          <View>
-            <Text className="text-gray-300 text-sm font-medium mb-3 tracking-wide">
-              DEADLINE
-            </Text>
-            <View className="relative">
-              <TextInput
-                className="text-white text-base rounded-2xl px-5 py-4 pr-12"
-                style={{
-                  backgroundColor: "rgba(56, 67, 82, 0.8)",
-                  borderWidth: 0,
-                  outline: "none",
-                }}
-                placeholder="DD/MM/YYYY"
-                placeholderTextColor="#6B7280"
-                value={formatDate(formData.deadline) || formData.deadline}
-                onChangeText={handleDateInput}
-                keyboardType="numeric"
-                maxLength={10}
-              />
-              <View
-                className="absolute right-4 top-1/2"
-                style={{ transform: [{ translateY: -10 }] }}
-              >
-                <Calendar size={20} color="#6B7280" />
-              </View>
-            </View>
+              placeholder="Masukkan nama kelas..."
+              placeholderTextColor="#6B7280"
+              value={formData.class_name}
+              onChangeText={(text) =>
+                setFormData({ ...formData, class_name: text })
+              }
+            />
           </View>
         </View>
 
@@ -298,9 +156,9 @@ export default function ModalTask() {
         <Pressable
           className="py-4 rounded-2xl mt-8 mb-6"
           style={{
-            background: "linear-gradient(135deg, #10B981, #3B82F6)",
-            backgroundColor: "#10B981",
-            shadowColor: "#10B981",
+            background: "#4F46E5",
+            backgroundColor: "#4F46E5",
+            shadowColor: "#4F46E5",
             shadowOffset: { width: 0, height: 8 },
             shadowOpacity: 0.3,
             shadowRadius: 16,
@@ -309,7 +167,7 @@ export default function ModalTask() {
           onPress={handleSubmit}
         >
           <Text className="text-white text-center font-bold text-lg tracking-wide">
-            {taskId ? "Perbarui Task" : "Simpan Task"}
+            {courseId ? "Perbarui Tugas" : "Simpan Tugas"}
           </Text>
         </Pressable>
 
