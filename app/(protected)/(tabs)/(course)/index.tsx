@@ -2,7 +2,6 @@ import { router } from "expo-router";
 import {
   BookOpen,
   Calendar,
-  Clock,
   Edit3,
   GraduationCap,
   MoreVertical,
@@ -10,7 +9,6 @@ import {
   Search,
   SlidersHorizontal,
   Trash2,
-  Users,
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
@@ -389,7 +387,7 @@ export default function Index() {
               </View>
 
               {/* Progress Bar */}
-              <View className="mb-1">
+              {/* <View className="mb-1">
                 <View className="flex flex-row justify-between mb-1">
                   <Text className="text-gray-400 text-xs">
                     Progress Semester
@@ -399,7 +397,7 @@ export default function Index() {
                 <View className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
                   <View className="w-3/4 h-full bg-indigo-500 rounded-full" />
                 </View>
-              </View>
+              </View> */}
             </View>
           </View>
         )}
@@ -507,8 +505,8 @@ export default function Index() {
                 <Pressable
                   onPress={() => router.push(`/(tabs)/(course)/${course.id}`)}
                 >
-                  <View className="mb-3">
-                    {/* Progress bar */}
+                  {/* Progress bar */}
+                  {/* <View className="mb-3">
                     <View className="flex flex-row justify-between mb-1">
                       <Text className="text-gray-400 text-xs">
                         Progress Perkuliahan
@@ -526,29 +524,29 @@ export default function Index() {
                         }}
                       />
                     </View>
-                  </View>
+                  </View> */}
 
                   <View className="flex flex-row justify-between border-t border-gray-600 pt-3">
-                    <View className="flex flex-row items-center">
+                    {/* <View className="flex flex-row items-center">
                       <Users size={16} color="#9CA3AF" />
                       <Text className="text-gray-400 text-sm ml-1">
                         {course.instructor}
                       </Text>
-                    </View>
-                    <View className="flex flex-row items-center">
+                    </View> */}
+                    {/* <View className="flex flex-row items-center">
                       <Clock size={16} color="#9CA3AF" />
                       <Text className="text-gray-400 text-sm ml-1">
                         {course.schedule}
                       </Text>
-                    </View>
+                    </View> */}
                   </View>
 
                   <View className="flex flex-row flex-wrap mt-3">
-                    <View className="bg-gray-800 px-2 py-1 rounded mr-2 mb-1">
+                    {/* <View className="bg-gray-800 px-2 py-1 rounded mr-2 mb-1">
                       <Text className="text-gray-300 text-xs">
                         Semester {course.semester}
                       </Text>
-                    </View>
+                    </View> */}
                     <View className="bg-gray-800 px-2 py-1 rounded mr-2 mb-1">
                       <Text className="text-gray-300 text-xs">
                         {course.room}
@@ -703,7 +701,7 @@ export default function Index() {
       {/* Floating Action Button */}
       <Pressable
         className="absolute bottom-6 right-6 bg-indigo-600 w-14 h-14 rounded-full items-center justify-center shadow-lg"
-        onPress={() => router.push("/modal-course")}
+        onPress={() => router.push("/ModalCourse")}
       >
         <Plus size={24} color="#FFFFFF" />
       </Pressable>

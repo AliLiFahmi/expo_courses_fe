@@ -16,7 +16,13 @@ export default function ProtectedLayout() {
         }}
       />
       <Stack.Screen
-        name="modal-course"
+        name="ModalCourse"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ModalTask"
         options={{
           headerShown: false,
         }}

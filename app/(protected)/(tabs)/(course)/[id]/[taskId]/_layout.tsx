@@ -5,11 +5,7 @@ export default function Layout() {
     <Stack>
       <Stack.Screen
         name="index"
-        options={{ title: "Task", headerShown: false }}
-      />
-      <Stack.Screen
-        name="[taskId]"
-        options={{ title: "ID", headerShown: false }}
+        options={{ title: "TaskDetail", headerShown: false }}
       />
     </Stack>
   );

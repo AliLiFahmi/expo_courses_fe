@@ -157,10 +157,10 @@ const TaskItemSkeleton = () => (
         <Calendar size={16} color="#A5B4FC" />
         <SkeletonLoader width="50%" height={14} style={{ marginLeft: 8 }} />
       </View>
-      <View className="flex-row items-center">
+      {/* <View className="flex-row items-center">
         <FileText size={16} color="#A5B4FC" />
         <SkeletonLoader width="40%" height={14} style={{ marginLeft: 8 }} />
-      </View>
+      </View> */}
     </View>
   </View>
 );
@@ -397,14 +397,14 @@ export default function CourseDetail() {
             <View className="flex-row items-center">
               <View className="bg-indigo-600/30 px-3 py-1 rounded-lg mr-2">
                 <Text className="text-indigo-300 text-sm">
-                  Kelas: {courseInfo.class_name}
+                  Semester: {courseInfo.class_name}
                 </Text>
               </View>
-              <View className="bg-purple-600/30 px-3 py-1 rounded-lg">
+              {/* <View className="bg-purple-600/30 px-3 py-1 rounded-lg">
                 <Text className="text-purple-300 text-sm">
                   Pengajar: {courseInfo.owner?.full_name || "Tidak diketahui"}
                 </Text>
-              </View>
+              </View> */}
             </View>
           </View>
         </View>
@@ -481,7 +481,11 @@ export default function CourseDetail() {
                   <View className="flex-row justify-between items-start mb-3">
                     <Pressable
                       className="flex-1 mr-3"
-                      onPress={() => router.push(`/(tabs)/(task)/${task.id}`)}
+                      onPress={() =>
+                        router.push(
+                          `/(tabs)/(course)/${task.course_id}/${task.id}`
+                        )
+                      }
                     >
                       <Text className="text-white text-lg font-bold">
                         {task.title}
@@ -704,7 +708,7 @@ export default function CourseDetail() {
       {/* Floating Action Button */}
       <Pressable
         className="absolute bottom-8 right-6 bg-indigo-500 w-16 h-16 rounded-2xl items-center justify-center shadow-2xl border border-indigo-400/50"
-        onPress={() => router.push(`/modal-task?courseId=${id}`)}
+        onPress={() => router.push(`/ModalTask?courseId=${id}`)}
       >
         <Plus size={28} color="#FFFFFF" />
       </Pressable>

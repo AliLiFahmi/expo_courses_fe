@@ -116,6 +116,7 @@ export const useCourse = () => {
       );
       throw err;
     } finally {
+      getCourses();
       setIsLoading(false);
     }
   };
@@ -142,6 +143,7 @@ export const useCourse = () => {
       );
       throw err;
     } finally {
+      getCourses();
       setIsLoading(false);
     }
   };
