@@ -172,7 +172,7 @@ const LoadingSkeleton = () => (
     <HeaderSkeleton />
     <ScrollView className="flex-1">
       <TaskInfoSkeleton />
-      <DocumentsSkeleton />
+      {/* <DocumentsSkeleton /> */}
     </ScrollView>
   </View>
 );
@@ -491,10 +491,6 @@ export default function TaskDetail() {
               <View
                 className={`px-3 py-2 rounded-xl border flex-row items-center ${statusStyle.bgColor}`}
               >
-                <StatusIcon
-                  size={16}
-                  color={statusStyle.textColor.replace("text-", "#")}
-                />
                 <Text className={`ml-2 font-medium ${statusStyle.textColor}`}>
                   {statusStyle.text}
                 </Text>
@@ -603,7 +599,7 @@ export default function TaskDetail() {
             <Text className="text-white text-lg font-bold mb-4">
               Aksi Cepat
             </Text>
-            <View className="flex-row space-x-3">
+            <View className="flex-row space-x-3 gap-2">
               {taskInfo.status !== "completed" && (
                 <Pressable
                   className="flex-1 bg-green-600/20 border border-green-500/30 rounded-xl p-3 items-center"

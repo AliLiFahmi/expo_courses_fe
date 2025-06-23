@@ -102,7 +102,6 @@ const CourseInfoSkeleton = () => (
           borderRadius={8}
           style={{ marginRight: 8 }}
         />
-        <SkeletonLoader width={120} height={28} borderRadius={8} />
       </View>
     </View>
   </View>
@@ -157,10 +156,6 @@ const TaskItemSkeleton = () => (
         <Calendar size={16} color="#A5B4FC" />
         <SkeletonLoader width="50%" height={14} style={{ marginLeft: 8 }} />
       </View>
-      {/* <View className="flex-row items-center">
-        <FileText size={16} color="#A5B4FC" />
-        <SkeletonLoader width="40%" height={14} style={{ marginLeft: 8 }} />
-      </View> */}
     </View>
   </View>
 );
@@ -400,11 +395,6 @@ export default function CourseDetail() {
                   Semester: {courseInfo.class_name}
                 </Text>
               </View>
-              {/* <View className="bg-purple-600/30 px-3 py-1 rounded-lg">
-                <Text className="text-purple-300 text-sm">
-                  Pengajar: {courseInfo.owner?.full_name || "Tidak diketahui"}
-                </Text>
-              </View> */}
             </View>
           </View>
         </View>

@@ -80,7 +80,6 @@ export const useTask = () => {
     try {
       setIsLoading(true);
       setError(null);
-      console.log("id task: ", id);
 
       const response = await api.get<{
         status: string;

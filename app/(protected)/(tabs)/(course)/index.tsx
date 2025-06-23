@@ -107,41 +107,15 @@ const CourseCardSkeleton = () => (
       />
       <View className="flex-1">
         <SkeletonItem width="80%" height={20} style={{ marginBottom: 4 }} />
-        <SkeletonItem width="60%" height={14} />
       </View>
       <View className="flex-row items-center">
-        <SkeletonItem
-          width={60}
-          height={32}
-          borderRadius={8}
-          style={{ marginRight: 8 }}
-        />
         <SkeletonItem width={32} height={32} borderRadius={8} />
       </View>
-    </View>
-
-    <View className="mb-3">
-      <View className="flex flex-row justify-between mb-1">
-        <SkeletonItem width={120} height={12} />
-        <SkeletonItem width={30} height={12} />
-      </View>
-      <SkeletonItem width="100%" height={8} borderRadius={4} />
-    </View>
-
-    <View className="flex flex-row justify-between border-t border-gray-600 pt-3">
-      <SkeletonItem width={100} height={14} />
-      <SkeletonItem width={120} height={14} />
     </View>
 
     <View className="flex flex-row flex-wrap mt-3">
       <SkeletonItem
         width={80}
-        height={24}
-        borderRadius={4}
-        style={{ marginRight: 8, marginBottom: 4 }}
-      />
-      <SkeletonItem
-        width={100}
         height={24}
         borderRadius={4}
         style={{ marginRight: 8, marginBottom: 4 }}
@@ -238,13 +212,7 @@ export default function Index() {
     return {
       id: course.id,
       title: course.title,
-      instructor: course.owner?.full_name || "Tidak diketahui",
-      schedule: "Jadwal belum ditentukan", // Karena tidak ada di API response
-      room: course.class_name || "Ruang belum ditentukan",
-      credits: 3, // Default value karena tidak ada di API
-      semester: 1, // Default value karena tidak ada di API
-      category: "Umum", // Default category karena tidak ada di API
-      progress: Math.floor(Math.random() * 100), // Random progress untuk demo
+      semester: course.class_name || "Semester ?",
       color: getColorByTitle(course.title),
       description: course.description,
       tasksCount: course.tasks?.length || 0,
@@ -273,22 +241,11 @@ export default function Index() {
     0
   );
 
-  // Filter categories - bisa disesuaikan dengan data dari API
-  const filters = [
-    "Semua",
-    "Umum",
-    "Pemrograman",
-    "Database",
-    "Web",
-    "AI",
-    "Jaringan",
-  ];
-
   // Filter courses based on search and category
   const filteredCourses = formattedCourses.filter((course) => {
     const matchesSearch =
       course.title.toLowerCase().includes(searchText.toLowerCase()) ||
-      course.instructor.toLowerCase().includes(searchText.toLowerCase());
+      course.description.toLowerCase().includes(searchText.toLowerCase());
     const matchesFilter =
       activeFilter === "Semua" || course.category === activeFilter;
     return matchesSearch && matchesFilter;
@@ -359,19 +316,6 @@ export default function Index() {
                   </Text>
                 </View>
               </View>
-
-              {/* Progress Bar */}
-              {/* <View className="mb-1">
-                <View className="flex flex-row justify-between mb-1">
-                  <Text className="text-gray-400 text-xs">
-                    Progress Semester
-                  </Text>
-                  <Text className="text-gray-400 text-xs">75%</Text>
-                </View>
-                <View className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
-                  <View className="w-3/4 h-full bg-indigo-500 rounded-full" />
-                </View>
-              </View> */}
             </View>
           </View>
         )}
@@ -425,76 +369,24 @@ export default function Index() {
                     <Text className="text-white text-lg font-bold">
                       {course.title}
                     </Text>
-                    <Text className="text-gray-400 text-sm">
-                      {course.category}
-                    </Text>
                   </Pressable>
 
-                  <View className="flex-row items-center space-x-2">
-                    <View className="bg-gray-800 p-2 rounded-lg">
-                      <Text className="text-white font-medium">
-                        {course.credits} SKS
-                      </Text>
-                    </View>
-
-                    {/* Action Button */}
-                    <Pressable
-                      className="p-2 rounded-lg"
-                      onPress={() => showCourseActions(course)}
-                    >
-                      <MoreVertical size={16} color="#A5B4FC" />
-                    </Pressable>
-                  </View>
+                  {/* Action Button */}
+                  <Pressable
+                    className="p-2 rounded-lg"
+                    onPress={() => showCourseActions(course)}
+                  >
+                    <MoreVertical size={16} color="#A5B4FC" />
+                  </Pressable>
                 </View>
 
                 <Pressable
                   onPress={() => router.push(`/(tabs)/(course)/${course.id}`)}
                 >
-                  {/* Progress bar */}
-                  {/* <View className="mb-3">
-                    <View className="flex flex-row justify-between mb-1">
-                      <Text className="text-gray-400 text-xs">
-                        Progress Perkuliahan
-                      </Text>
-                      <Text className="text-gray-400 text-xs">
-                        {course.progress}%
-                      </Text>
-                    </View>
-                    <View className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
-                      <View
-                        className="h-full rounded-full"
-                        style={{
-                          backgroundColor: course.color,
-                          width: `${course.progress}%`,
-                        }}
-                      />
-                    </View>
-                  </View> */}
-
-                  <View className="flex flex-row justify-between border-t border-gray-600 pt-3">
-                    {/* <View className="flex flex-row items-center">
-                      <Users size={16} color="#9CA3AF" />
-                      <Text className="text-gray-400 text-sm ml-1">
-                        {course.instructor}
-                      </Text>
-                    </View> */}
-                    {/* <View className="flex flex-row items-center">
-                      <Clock size={16} color="#9CA3AF" />
-                      <Text className="text-gray-400 text-sm ml-1">
-                        {course.schedule}
-                      </Text>
-                    </View> */}
-                  </View>
-
                   <View className="flex flex-row flex-wrap mt-3">
-                    {/* <View className="bg-gray-800 px-2 py-1 rounded mr-2 mb-1">
-                      <Text className="text-gray-300 text-xs">
-                        Semester {course.semester}
-                      </Text>
-                    </View> */}
                     <View className="bg-gray-800 px-2 py-1 rounded mr-2 mb-1">
                       <Text className="text-gray-300 text-xs">
-                        {course.room}
+                        {course.semester}
                       </Text>
                     </View>
                     {course.tasksCount > 0 && (
