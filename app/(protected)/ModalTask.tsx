@@ -1,17 +1,17 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { router, useLocalSearchParams } from "expo-router";
-import { X, Calendar } from "lucide-react-native";
+import { Calendar, X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
   Alert,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
   View,
-  ScrollView,
 } from "react-native";
-import { useTask } from "../../hooks/useTask";
 import { useCourse } from "../../hooks/useCourse";
+import { useTask } from "../../hooks/useTask";
 
 export default function ModalTask() {
   const [formData, setFormData] = useState({
@@ -19,13 +19,14 @@ export default function ModalTask() {
     description: "",
     deadline: "",
     course_id: "",
+    status: "pending",
   });
 
   const [courses, setCourses] = useState([]);
   const [showCoursePicker, setShowCoursePicker] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const { taskId } = useLocalSearchParams();
+  const { taskId, courseId } = useLocalSearchParams();
   const { getTaskById, createTask, updateTask } = useTask();
   const { getCourses } = useCourse();
 
@@ -33,7 +34,10 @@ export default function ModalTask() {
     // Load courses for dropdown
     const fetchCourses = async () => {
       try {
-        const coursesData = await getCourses();
+        const coursesData = await getCourses(courseId);
+        setFormData({
+          course_id: courseId || "",
+        });
         setCourses(coursesData);
       } catch (err) {
         console.error("Error fetching courses:", err);
@@ -51,6 +55,7 @@ export default function ModalTask() {
             description: task.description || "",
             deadline: task.deadline || "",
             course_id: task.course_id || "",
+            status: task.status || "pending",
           });
         } catch (err) {
           console.error("Error fetching task data:", err);
@@ -97,7 +102,11 @@ export default function ModalTask() {
         await updateTask(taskId, formData);
         Alert.alert("Sukses", "Task berhasil diperbarui");
       } else {
-        await createTask(formData);
+        const newTask = {
+          ...formData,
+          status: "pending",
+        };
+        await createTask(newTask);
         Alert.alert("Sukses", "Task berhasil ditambahkan");
       }
       router.back();
@@ -211,59 +220,6 @@ export default function ModalTask() {
                 setFormData({ ...formData, description: text })
               }
             />
-          </View>
-
-          {/* Course Selection */}
-          <View>
-            <Text className="text-gray-300 text-sm font-medium mb-3 tracking-wide">
-              MATA KULIAH
-            </Text>
-            <Pressable
-              className="rounded-2xl px-5 py-4"
-              style={{
-                backgroundColor: "rgba(56, 67, 82, 0.8)",
-                borderWidth: 0,
-              }}
-              onPress={() => setShowCoursePicker(!showCoursePicker)}
-            >
-              <Text
-                className="text-base"
-                style={{
-                  color: formData.course_id ? "#FFFFFF" : "#6B7280",
-                }}
-              >
-                {getSelectedCourseName()}
-              </Text>
-            </Pressable>
-
-            {showCoursePicker && (
-              <View
-                className="mt-2 rounded-2xl overflow-hidden"
-                style={{ backgroundColor: "rgba(56, 67, 82, 0.9)" }}
-              >
-                {courses.map((course) => (
-                  <Pressable
-                    key={course.id}
-                    className="px-5 py-3 border-b border-gray-600"
-                    onPress={() => {
-                      setFormData({ ...formData, course_id: course.id });
-                      setShowCoursePicker(false);
-                    }}
-                    style={{
-                      backgroundColor:
-                        formData.course_id === course.id
-                          ? "rgba(59, 130, 246, 0.2)"
-                          : "transparent",
-                    }}
-                  >
-                    <Text className="text-white text-base">{course.title}</Text>
-                    <Text className="text-gray-400 text-sm mt-1">
-                      {course.class_name}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            )}
           </View>
 
           {/* Deadline Field */}

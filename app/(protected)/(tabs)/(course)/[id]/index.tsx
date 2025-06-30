@@ -227,7 +227,7 @@ export default function CourseDetail() {
   // Fungsi untuk mengambil data tasks
   const fetchTasks = async () => {
     try {
-      const allTasks = await getTasks();
+      const allTasks = await getTasks(id);
       // Filter tasks berdasarkan course_id
       const courseTasks = allTasks.filter((task) => task.course_id === id);
       setTasks(courseTasks);
@@ -267,7 +267,7 @@ export default function CourseDetail() {
   const handleEditTask = () => {
     setShowActionModal(false);
     if (selectedTask) {
-      router.push(`/modal-task?taskId=${selectedTask.id}&courseId=${id}`);
+      router.push(`/ModalTask?taskId=${selectedTask.id}&courseId=${id}`);
     }
   };
 

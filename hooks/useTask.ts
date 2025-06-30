@@ -47,6 +47,7 @@ interface CreateTaskData {
   description: string;
   deadline: string;
   course_id: string;
+  status: string;
 }
 
 interface UpdateTaskData extends Partial<CreateTaskData> {
@@ -57,20 +58,29 @@ export const useTask = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getTasks = async () => {
+  const getTasks = async (courseId: string): Promise<Task[]> => {
     try {
       setIsLoading(true);
       setError(null);
 
-      const response = await api.get<TaskResponse>("/v1/tasks");
+      const response = await api.get<TaskResponse>("/v1/tasks", {
+        params: { course_id: courseId },
+      });
+
+      // Validasi jika response.data.data ada
+      if (!response.data || !Array.isArray(response.data.data)) {
+        throw new Error("Data task tidak valid.");
+      }
+
       return response.data.data;
-    } catch (err) {
-      setError(
+    } catch (err: unknown) {
+      const errorMessage =
         err instanceof Error
           ? err.message
-          : "Terjadi kesalahan saat mengambil data tasks"
-      );
-      throw err;
+          : "Terjadi kesalahan saat mengambil data tasks";
+
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -118,6 +128,7 @@ export const useTask = () => {
       );
       throw err;
     } finally {
+      getTasks(data.course_id);
       setIsLoading(false);
     }
   };
@@ -141,6 +152,7 @@ export const useTask = () => {
       );
       throw err;
     } finally {
+      getTasks(data.course_id);
       setIsLoading(false);
     }
   };
