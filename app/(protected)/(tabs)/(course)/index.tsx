@@ -215,7 +215,7 @@ export default function Index() {
       semester: course.class_name || "Semester ?",
       color: getColorByTitle(course.title),
       description: course.description,
-      tasksCount: course.tasks?.length || 0,
+      tasksCount: course.tasks_count || 0,
     };
   };
 

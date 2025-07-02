@@ -39,6 +39,7 @@ interface Course {
   description: string;
   class_name: string;
   owner_id: string;
+  tasks_count: number;
   created_at: string;
   updated_at: string;
   owner: Owner;
