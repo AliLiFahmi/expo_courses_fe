@@ -1,24 +1,23 @@
 import { router } from "expo-router";
 import {
   BookOpen,
-  Calendar,
   Edit3,
   GraduationCap,
   MoreVertical,
   Plus,
+  RefreshCcw,
   Search,
-  SlidersHorizontal,
   Trash2,
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-  Alert,
   Animated,
   Modal,
   Pressable,
   ScrollView,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -76,10 +75,10 @@ const StatisticsSkeleton = () => (
       <SkeletonItem width={150} height={24} style={{ marginBottom: 16 }} />
 
       <View className="flex flex-row justify-between mb-5">
-        {[1, 2, 3].map((item) => (
+        {[1, 2].map((item) => (
           <View
             key={item}
-            className="w-[30%] bg-gray-800 rounded-lg p-3 items-center"
+            className="w-[48%] bg-gray-800 rounded-lg p-3 items-center"
           >
             <SkeletonItem
               width={40}
@@ -145,6 +144,7 @@ export default function Index() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [refreshFlag, setRefreshFlag] = useState(false);
 
   const { getCourses, deleteCourse, isLoading, error } = useCourse();
 
@@ -154,7 +154,7 @@ export default function Index() {
       const coursesData = await getCourses();
       setCourses(coursesData);
     } catch (err) {
-      Alert.alert("Error", "Gagal mengambil data mata kuliah");
+      ToastAndroid.show("Gagal mengambil data mata kuliah", ToastAndroid.SHORT);
       console.error("Error fetching courses:", err);
     }
   };
@@ -162,7 +162,7 @@ export default function Index() {
   // Load data saat komponen pertama kali dimount
   useEffect(() => {
     fetchCourses();
-  }, []);
+  }, [refreshFlag]);
 
   // Fungsi untuk menampilkan action modal
   const showCourseActions = (course) => {
@@ -191,10 +191,10 @@ export default function Index() {
     try {
       await deleteCourse(selectedCourse.id);
       setShowDeleteModal(false);
-      Alert.alert("Berhasil", "Mata kuliah berhasil dihapus");
+      ToastAndroid.show("Mata kuliah berhasil dihapus", ToastAndroid.SHORT);
       fetchCourses(); // Refresh course list
     } catch (error) {
-      Alert.alert("Error", "Gagal menghapus mata kuliah");
+      ToastAndroid.show("Gagal menghapus mata kuliah", ToastAndroid.SHORT);
       console.error("Error deleting course:", error);
     } finally {
       setIsDeleting(false);
@@ -236,8 +236,8 @@ export default function Index() {
   // Format courses untuk UI
   const formattedCourses = courses.map(formatCourseData);
 
-  const totalCredits = formattedCourses.reduce(
-    (sum, course) => sum + course.credits,
+  const totalTasks = formattedCourses.reduce(
+    (sum, course) => sum + course.tasksCount,
     0
   );
 
@@ -284,7 +284,7 @@ export default function Index() {
               </Text>
 
               <View className="flex flex-row justify-between mb-5">
-                <View className="w-[30%] bg-gray-800 rounded-lg p-3 items-center">
+                <View className="w-[48%] bg-gray-800 rounded-lg p-3 items-center">
                   <View className="bg-indigo-600/20 p-2 rounded-lg w-10 h-10 items-center justify-center mb-2">
                     <BookOpen size={18} color="#818CF8" />
                   </View>
@@ -296,23 +296,15 @@ export default function Index() {
                   </Text>
                 </View>
 
-                <View className="w-[30%] bg-gray-800 rounded-lg p-3 items-center">
+                <View className="w-[48%] bg-gray-800 rounded-lg p-3 items-center">
                   <View className="bg-green-600/20 p-2 rounded-lg w-10 h-10 items-center justify-center mb-2">
                     <GraduationCap size={18} color="#4ADE80" />
                   </View>
-                  <Text className="text-green-400 text-xs mb-1">Total SKS</Text>
-                  <Text className="text-white text-lg font-bold">
-                    {totalCredits}
+                  <Text className="text-green-400 text-xs mb-1">
+                    Total Tugas
                   </Text>
-                </View>
-
-                <View className="w-[30%] bg-gray-800 rounded-lg p-3 items-center">
-                  <View className="bg-purple-600/20 p-2 rounded-lg w-10 h-10 items-center justify-center mb-2">
-                    <Calendar size={18} color="#C084FC" />
-                  </View>
-                  <Text className="text-purple-400 text-xs mb-1">Semester</Text>
                   <Text className="text-white text-lg font-bold">
-                    Ganjil 2024
+                    {totalTasks}
                   </Text>
                 </View>
               </View>
@@ -336,8 +328,11 @@ export default function Index() {
                 style={{ height: 24 }}
               />
             </View>
-            <Pressable className="bg-indigo-500/30 backdrop-blur-lg p-3 rounded-xl border border-indigo-500/50">
-              <SlidersHorizontal size={20} color="#A5B4FC" />
+            <Pressable
+              className="bg-indigo-500/30 backdrop-blur-lg p-3 rounded-xl border border-indigo-500/50"
+              onPress={fetchCourses}
+            >
+              <RefreshCcw size={20} color="#A5B4FC" />
             </Pressable>
           </View>
         )}

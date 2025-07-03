@@ -2,11 +2,11 @@ import { router, useLocalSearchParams } from "expo-router";
 import { X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-  Alert,
   Pressable,
   ScrollView,
   Text,
   TextInput,
+  ToastAndroid,
   View,
 } from "react-native";
 import { useCourse } from "../../hooks/useCourse";
@@ -43,14 +43,20 @@ export default function ModalAdd() {
     try {
       if (courseId) {
         await updateCourse(courseId, formData);
-        Alert.alert("Sukses", "Tugas berhasil diperbarui");
+        ToastAndroid.show(
+          "Mata Kuliah berhasil diperbarui",
+          ToastAndroid.SHORT
+        );
       } else {
         await createCourse(formData);
-        Alert.alert("Sukses", "Tugas berhasil ditambahkan");
+        ToastAndroid.show(
+          "Mata Kuliah berhasil ditambahkan",
+          ToastAndroid.SHORT
+        );
       }
       router.back();
     } catch (err) {
-      Alert.alert("Gagal", "Terjadi kesalahan saat menyimpan tugas");
+      ToastAndroid.show("Gagal menyimpan Mata Kuliah", ToastAndroid.SHORT);
       console.error("Error saving course:", err);
     }
   };
@@ -71,7 +77,7 @@ export default function ModalAdd() {
         <View className="flex-row justify-between items-center mb-8">
           <View>
             <Text className="text-white text-2xl font-bold tracking-tight">
-              {courseId ? "Edit Tugas" : "Tambah Tugas"}
+              {courseId ? "Edit Mata Kuliah" : "Tambah Mata Kuliah"}
             </Text>
             <View
               className="h-1 rounded-full mt-2"
@@ -94,16 +100,16 @@ export default function ModalAdd() {
         {/* Form Fields */}
         <View className="space-y-6">
           {/* Title Field */}
-          <View>
+          <View className="mb-3">
             <Text className="text-gray-300 text-sm font-medium mb-3 tracking-wide">
-              JUDUL TUGAS
+              JUDUL MATA KULAH
             </Text>
             <TextInput
               className="text-white text-base rounded-2xl px-5 py-4"
               style={{
                 backgroundColor: "rgba(56, 67, 82, 0.8)",
               }}
-              placeholder="Masukkan judul tugas..."
+              placeholder="Masukkan judul Mata Kuliah..."
               placeholderTextColor="#6B7280"
               value={formData.title}
               onChangeText={(text) => setFormData({ ...formData, title: text })}
@@ -111,7 +117,7 @@ export default function ModalAdd() {
           </View>
 
           {/* Description Field */}
-          <View>
+          <View className="mb-3">
             <Text className="text-gray-300 text-sm font-medium mb-3 tracking-wide">
               DESKRIPSI
             </Text>
@@ -122,7 +128,7 @@ export default function ModalAdd() {
                 textAlignVertical: "top",
                 minHeight: 100,
               }}
-              placeholder="Jelaskan detail tugas..."
+              placeholder="Jelaskan detail Mata Kuliah..."
               placeholderTextColor="#6B7280"
               multiline
               value={formData.description}
@@ -133,7 +139,7 @@ export default function ModalAdd() {
           </View>
 
           {/* Class Name Field */}
-          <View>
+          <View className="mb-3">
             <Text className="text-gray-300 text-sm font-medium mb-3 tracking-wide">
               SEMESTER / KELAS
             </Text>
@@ -167,7 +173,7 @@ export default function ModalAdd() {
           onPress={handleSubmit}
         >
           <Text className="text-white text-center font-bold text-lg tracking-wide">
-            {courseId ? "Perbarui Tugas" : "Simpan Tugas"}
+            {courseId ? "Perbarui Mata Kuliah" : "Simpan Mata Kuliah"}
           </Text>
         </Pressable>
 

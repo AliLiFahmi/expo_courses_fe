@@ -157,6 +157,32 @@ export const useTask = () => {
     }
   };
 
+  const quickUpdateStatus = async (id: string, newStatus: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const response = await api.put<{
+        status: string;
+        message: string;
+        data: Task;
+      }>(`/v1/tasks/${id}/quick-update`, {
+        status: newStatus,
+      });
+
+      return response.data.data;
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Terjadi kesalahan saat mengubah status"
+      );
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const deleteTask = async (id: string) => {
     try {
       setIsLoading(true);
@@ -182,6 +208,7 @@ export const useTask = () => {
     getTaskById,
     createTask,
     updateTask,
+    quickUpdateStatus,
     deleteTask,
   };
 };

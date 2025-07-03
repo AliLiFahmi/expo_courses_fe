@@ -8,17 +8,18 @@ import {
   FileText,
   MoreVertical,
   Plus,
+  RefreshCcw,
   Trash2,
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-  Alert,
   Animated,
   Modal,
   Pressable,
   RefreshControl,
   ScrollView,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -85,6 +86,7 @@ const HeaderSkeleton = () => (
       />
       <SkeletonLoader width="50%" height={16} borderRadius={4} />
     </View>
+    <SkeletonLoader width={32} height={32} borderRadius={6} />
   </View>
 );
 
@@ -113,7 +115,7 @@ const StatisticsSkeleton = () => (
     <View className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-4 border border-gray-700/50">
       <SkeletonLoader width="50%" height={20} style={{ marginBottom: 16 }} />
       <View className="flex-row justify-between">
-        {[1, 2, 3, 4].map((item) => (
+        {[1, 2, 3, 4, 5].map((item) => (
           <View key={item} className="items-center">
             <SkeletonLoader
               width={40}
@@ -232,7 +234,7 @@ export default function CourseDetail() {
       const courseTasks = allTasks.filter((task) => task.course_id === id);
       setTasks(courseTasks);
     } catch (err) {
-      Alert.alert("Error", "Gagal mengambil data tugas");
+      ToastAndroid.show("Gagal mengambil data tugas", ToastAndroid.SHORT);
       console.error("Error fetching tasks:", err);
     }
   };
@@ -285,10 +287,10 @@ export default function CourseDetail() {
     try {
       await deleteTask(selectedTask.id);
       setShowDeleteModal(false);
-      Alert.alert("Berhasil", "Tugas berhasil dihapus");
+      ToastAndroid.show("Tugas berhasil dihapus", ToastAndroid.SHORT);
       fetchTasks(); // Refresh task list
     } catch (error) {
-      Alert.alert("Error", "Gagal menghapus tugas");
+      ToastAndroid.show("Gagal menghapus tugas", ToastAndroid.SHORT);
       console.error("Error deleting task:", error);
     } finally {
       setIsDeleting(false);
@@ -326,7 +328,7 @@ export default function CourseDetail() {
           textColor: "text-green-300",
           text: "Selesai",
         };
-      case "in_progress":
+      case "ongoing":
         return {
           bgColor: "bg-blue-500/30 border-blue-500/50",
           textColor: "text-blue-300",
@@ -377,6 +379,15 @@ export default function CourseDetail() {
             {tasks.length} tugas • {courseInfo?.class_name || ""}
           </Text>
         </View>
+        <Pressable
+          className="mr-3 p-2 bg-indigo-500/30 backdrop-blur-lg rounded-xl border border-indigo-500/50"
+          onPress={() => {
+            fetchCourseInfo();
+            fetchTasks();
+          }}
+        >
+          <RefreshCcw size={20} color="#A5B4FC" />
+        </Pressable>
       </View>
 
       {/* Course Info Card */}
@@ -418,6 +429,12 @@ export default function CourseDetail() {
                 {tasks.filter((task) => task.status === "completed").length}
               </Text>
               <Text className="text-gray-400 text-sm">Selesai</Text>
+            </View>
+            <View className="items-center">
+              <Text className="text-2xl font-bold text-blue-400">
+                {tasks.filter((task) => task.status === "ongoing").length}
+              </Text>
+              <Text className="text-gray-400 text-sm">Progress</Text>
             </View>
             <View className="items-center">
               <Text className="text-2xl font-bold text-yellow-400">

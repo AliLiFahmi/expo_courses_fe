@@ -11,14 +11,13 @@ import {
   Edit3,
   Eye,
   FileText,
-  MoreVertical,
+  RefreshCcw,
   Trash2,
   Upload,
   User,
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-  Alert,
   Animated,
   Linking,
   Modal,
@@ -26,6 +25,7 @@ import {
   RefreshControl,
   ScrollView,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -188,6 +188,7 @@ export default function TaskDetail() {
 
   const {
     getTaskById,
+    quickUpdateStatus,
     deleteTask,
     updateTaskStatus,
     isLoading: taskLoading,
@@ -214,7 +215,7 @@ export default function TaskDetail() {
       }
     } catch (err) {
       console.error("Error fetching task info:", err);
-      Alert.alert("Error", "Gagal mengambil data tugas");
+      ToastAndroid.show("Gagal mengambil data tugas", ToastAndroid.SHORT);
     }
   };
 
@@ -263,7 +264,7 @@ export default function TaskDetail() {
           text: "Selesai",
           icon: CheckCircle,
         };
-      case "in_progress":
+      case "ongoing":
         return {
           bgColor: "bg-blue-500/30 border-blue-500/50",
           textColor: "text-blue-300",
@@ -288,20 +289,20 @@ export default function TaskDetail() {
         return {
           bgColor: "bg-red-500/30 border-red-500/50",
           textColor: "text-red-300",
-          text: "Tinggi",
+          text: "High",
         };
       case "medium":
         return {
           bgColor: "bg-orange-500/30 border-orange-500/50",
           textColor: "text-orange-300",
-          text: "Sedang",
+          text: "Medium",
         };
       case "low":
       default:
         return {
           bgColor: "bg-gray-500/30 border-gray-500/50",
           textColor: "text-gray-300",
-          text: "Rendah",
+          text: "Low",
         };
     }
   };
@@ -337,11 +338,11 @@ export default function TaskDetail() {
   // Fungsi untuk mengubah status task
   const handleStatusChange = async (newStatus) => {
     try {
-      await updateTaskStatus(id, newStatus);
-      setTaskInfo((prev) => ({ ...prev, status: newStatus }));
-      Alert.alert("Berhasil", "Status tugas berhasil diubah");
+      await quickUpdateStatus(taskId, newStatus);
+      await fetchTaskInfo();
+      ToastAndroid.show("Status tugas berhasil diubah", ToastAndroid.SHORT);
     } catch (error) {
-      Alert.alert("Error", "Gagal mengubah status tugas");
+      ToastAndroid.show("Gagal mengubah status tugas", ToastAndroid.SHORT);
       console.error("Error updating task status:", error);
     }
   };
@@ -372,10 +373,10 @@ export default function TaskDetail() {
     try {
       await deleteTask(taskInfo.id);
       setShowDeleteModal(false);
-      Alert.alert("Berhasil", "Tugas berhasil dihapus");
+      ToastAndroid.show("Tugas berhasil dihapus", ToastAndroid.SHORT);
       router.back();
     } catch (error) {
-      Alert.alert("Error", "Gagal menghapus tugas");
+      ToastAndroid.show("Gagal menghapus tugas", ToastAndroid.SHORT);
       console.error("Error deleting task:", error);
     } finally {
       setIsDeleting(false);
@@ -388,10 +389,10 @@ export default function TaskDetail() {
       if (document.url) {
         await Linking.openURL(document.url);
       } else {
-        Alert.alert("Info", "URL dokumen tidak tersedia");
+        ToastAndroid.show("URL dokumen tidak tersedia", ToastAndroid.SHORT);
       }
     } catch (error) {
-      Alert.alert("Error", "Gagal membuka dokumen");
+      ToastAndroid.show("Gagal membuka dokumen", ToastAndroid.SHORT);
       console.error("Error opening document:", error);
     }
   };
@@ -460,10 +461,12 @@ export default function TaskDetail() {
           </Text>
         </View>
         <Pressable
-          className="p-2 rounded-lg"
-          onPress={() => setShowActionModal(true)}
+          className="mr-3 p-2 bg-indigo-500/30 backdrop-blur-lg rounded-xl border border-indigo-500/50"
+          onPress={() => {
+            fetchTaskInfo();
+          }}
         >
-          <MoreVertical size={20} color="#A5B4FC" />
+          <RefreshCcw size={20} color="#A5B4FC" />
         </Pressable>
       </View>
 
@@ -593,14 +596,15 @@ export default function TaskDetail() {
           </View>
         </View>
 
-        {/* Quick Actions */}
-        <View className="mx-4 mb-4">
-          <View className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-4 border border-gray-700/50">
-            <Text className="text-white text-lg font-bold mb-4">
-              Aksi Cepat
-            </Text>
-            <View className="flex-row space-x-3 gap-2">
-              {taskInfo.status !== "completed" && (
+        {taskInfo.status !== "completed" && (
+          <View className="mx-4 mb-4">
+            <View className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-4 border border-gray-700/50">
+              <Text className="text-white text-lg font-bold mb-4">
+                Aksi Cepat
+              </Text>
+
+              <View className="flex-row space-x-3 gap-2">
+                {/* Tombol Selesai (jika belum completed) */}
                 <Pressable
                   className="flex-1 bg-green-600/20 border border-green-500/30 rounded-xl p-3 items-center"
                   onPress={() => handleStatusChange("completed")}
@@ -610,13 +614,12 @@ export default function TaskDetail() {
                     Selesai
                   </Text>
                 </Pressable>
-              )}
 
-              {taskInfo.status !== "in_progress" &&
-                taskInfo.status !== "completed" && (
+                {/* Tombol Mulai hanya jika statusnya pending */}
+                {taskInfo.status === "pending" && (
                   <Pressable
                     className="flex-1 bg-blue-600/20 border border-blue-500/30 rounded-xl p-3 items-center"
-                    onPress={() => handleStatusChange("in_progress")}
+                    onPress={() => handleStatusChange("ongoing")}
                   >
                     <Clock size={20} color="#93C5FD" />
                     <Text className="text-blue-300 text-sm font-medium mt-1">
@@ -624,9 +627,10 @@ export default function TaskDetail() {
                     </Text>
                   </Pressable>
                 )}
+              </View>
             </View>
           </View>
-        </View>
+        )}
 
         {/* Documents Section */}
         {taskInfo.documents && taskInfo.documents.length > 0 && (

@@ -3,11 +3,11 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Calendar, X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-  Alert,
   Pressable,
   ScrollView,
   Text,
   TextInput,
+  ToastAndroid,
   View,
 } from "react-native";
 import { useCourse } from "../../hooks/useCourse";
@@ -22,8 +22,6 @@ export default function ModalTask() {
     status: "pending",
   });
 
-  const [courses, setCourses] = useState([]);
-  const [showCoursePicker, setShowCoursePicker] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const { taskId, courseId } = useLocalSearchParams();
@@ -38,7 +36,6 @@ export default function ModalTask() {
         setFormData({
           course_id: courseId || "",
         });
-        setCourses(coursesData);
       } catch (err) {
         console.error("Error fetching courses:", err);
       }
@@ -75,69 +72,37 @@ export default function ModalTask() {
     });
   };
 
-  const getSelectedCourseName = () => {
-    const selectedCourse = courses.find(
-      (course) => course.id === formData.course_id
-    );
-    return selectedCourse ? selectedCourse.title : "Pilih Mata Kuliah";
-  };
-
   const handleSubmit = async () => {
     // Validation
     if (!formData.title.trim()) {
-      Alert.alert("Error", "Judul task tidak boleh kosong");
+      ToastAndroid.show("Judul tugas tidak boleh kosong", ToastAndroid.SHORT);
       return;
     }
     if (!formData.course_id) {
-      Alert.alert("Error", "Pilih mata kuliah terlebih dahulu");
+      ToastAndroid.show("Mata kuliah tidak boleh kosong", ToastAndroid.SHORT);
       return;
     }
     if (!formData.deadline) {
-      Alert.alert("Error", "Deadline tidak boleh kosong");
+      ToastAndroid.show("Deadline tidak boleh kosong", ToastAndroid.SHORT);
       return;
     }
 
     try {
       if (taskId) {
         await updateTask(taskId, formData);
-        Alert.alert("Sukses", "Task berhasil diperbarui");
+        ToastAndroid.show("Tugas berhasil diperbarui", ToastAndroid.SHORT);
       } else {
         const newTask = {
           ...formData,
           status: "pending",
         };
         await createTask(newTask);
-        Alert.alert("Sukses", "Task berhasil ditambahkan");
+        ToastAndroid.show("Tugas berhasil ditambahkan", ToastAndroid.SHORT);
       }
       router.back();
     } catch (err) {
-      Alert.alert("Gagal", "Terjadi kesalahan saat menyimpan task");
+      ToastAndroid.show("Tugas gagal ditambahkan", ToastAndroid.SHORT);
       console.error("Error saving task:", err);
-    }
-  };
-
-  const handleDateInput = (text) => {
-    // Simple date formatting as user types (DD/MM/YYYY)
-    let formattedText = text.replace(/\D/g, "");
-    if (formattedText.length >= 2) {
-      formattedText =
-        formattedText.substring(0, 2) + "/" + formattedText.substring(2);
-    }
-    if (formattedText.length >= 5) {
-      formattedText =
-        formattedText.substring(0, 5) + "/" + formattedText.substring(5, 9);
-    }
-
-    // Convert to ISO format for backend (YYYY-MM-DD)
-    if (formattedText.length === 10) {
-      const [day, month, year] = formattedText.split("/");
-      const isoDate = `${year}-${month.padStart(2, "0")}-${day.padStart(
-        2,
-        "0"
-      )}`;
-      setFormData({ ...formData, deadline: isoDate });
-    } else {
-      setFormData({ ...formData, deadline: formattedText });
     }
   };
 
