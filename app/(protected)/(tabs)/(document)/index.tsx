@@ -1,4 +1,10 @@
-import { Clock, GraduationCap, ListTodo } from "lucide-react-native";
+import {
+  Clock,
+  GraduationCap,
+  ListTodo,
+  Target,
+  Users,
+} from "lucide-react-native";
 import { ScrollView, Text, View } from "react-native";
 
 export default function Index() {
@@ -82,7 +88,7 @@ export default function Index() {
         <Text className="text-white text-xl font-bold mb-4">
           Cara Penggunaan
         </Text>
-        <View className="bg-gray-700 rounded-lg p-5 mb-24">
+        <View className="bg-gray-700 rounded-lg p-5 mb-6">
           <View className="space-y-4">
             <View className="flex-row items-start">
               <View className="bg-indigo-600/20 w-8 h-8 rounded-lg items-center justify-center mr-3">
@@ -123,6 +129,34 @@ export default function Index() {
                 <Text className="text-gray-400">
                   Perbarui status tugas dan pantau progress perkuliahan Anda.
                 </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Developer Info */}
+        <Text className="text-white text-xl font-bold mb-4">
+          Tentang Pengembang
+        </Text>
+        <View className="bg-gray-700 rounded-xl p-6 mb-10">
+          <View className="space-y-3">
+            <View className="flex flex-row items-center">
+              <View className="bg-indigo-600/20 p-2 rounded-lg w-10 h-10 items-center justify-center mr-3">
+                <Users size={20} color="#818CF8" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-white font-bold">Dikembangkan oleh:</Text>
+                <Text className="text-gray-400 text-sm">MUHAMAD ALI FAHMI</Text>
+              </View>
+            </View>
+
+            <View className="flex flex-row items-center">
+              <View className="bg-indigo-600/20 p-2 rounded-lg w-10 h-10 items-center justify-center mr-3">
+                <Target size={20} color="#818CF8" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-white font-bold">NIM:</Text>
+                <Text className="text-gray-400 text-sm">20124017</Text>
               </View>
             </View>
           </View>

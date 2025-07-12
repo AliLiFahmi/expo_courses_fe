@@ -122,7 +122,7 @@ export default function ModalTask() {
         <View className="flex-row justify-between items-center mb-8">
           <View>
             <Text className="text-white text-2xl font-bold tracking-tight">
-              {taskId ? "Edit Task" : "Buat Task"}
+              {taskId ? "Edit Tugas" : "Buat Tugas"}
             </Text>
             <View
               className="h-1 rounded-full mt-2"
@@ -143,11 +143,11 @@ export default function ModalTask() {
         </View>
 
         {/* Form Fields */}
-        <View className="space-y-6">
+        <View className="space-y-6 gap-3">
           {/* Title Field */}
           <View>
             <Text className="text-gray-300 text-sm font-medium mb-3 tracking-wide">
-              JUDUL TASK
+              JUDUL Tugas
             </Text>
             <TextInput
               className="text-white text-base rounded-2xl px-5 py-4"
@@ -156,7 +156,7 @@ export default function ModalTask() {
                 borderWidth: 0,
                 outline: "none",
               }}
-              placeholder="Masukkan judul task..."
+              placeholder="Masukkan judul tugas..."
               placeholderTextColor="#6B7280"
               value={formData.title}
               onChangeText={(text) => setFormData({ ...formData, title: text })}
@@ -177,7 +177,7 @@ export default function ModalTask() {
                 textAlignVertical: "top",
                 minHeight: 100,
               }}
-              placeholder="Jelaskan detail task..."
+              placeholder="Jelaskan detail tugas..."
               placeholderTextColor="#6B7280"
               multiline
               value={formData.description}
@@ -249,7 +249,7 @@ export default function ModalTask() {
           onPress={handleSubmit}
         >
           <Text className="text-white text-center font-bold text-lg tracking-wide">
-            {taskId ? "Perbarui Task" : "Simpan Task"}
+            {taskId ? "Perbarui Tugas" : "Simpan Tugas"}
           </Text>
         </Pressable>
 

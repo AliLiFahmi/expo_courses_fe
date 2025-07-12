@@ -141,15 +141,16 @@ export default function ModalAdd() {
           {/* Class Name Field */}
           <View className="mb-3">
             <Text className="text-gray-300 text-sm font-medium mb-3 tracking-wide">
-              SEMESTER / KELAS
+              SEMESTER
             </Text>
             <TextInput
               className="text-white text-base rounded-2xl px-5 py-4"
               style={{
                 backgroundColor: "rgba(56, 67, 82, 0.8)",
               }}
-              placeholder="Masukkan nama kelas..."
+              placeholder="Masukkan semester..."
               placeholderTextColor="#6B7280"
+              keyboardType="number-pad" // Hanya angka
               value={formData.class_name}
               onChangeText={(text) =>
                 setFormData({ ...formData, class_name: text })

@@ -88,7 +88,7 @@ export default function Index() {
         </View>
 
         {/* Menu Items */}
-        <View className="mb-6">
+        {/* <View className="mb-6">
           {menuItems.map((item) => (
             <Pressable
               key={item.id}
@@ -106,7 +106,7 @@ export default function Index() {
               <ChevronRight size={20} color="#6B7280" />
             </Pressable>
           ))}
-        </View>
+        </View> */}
 
         {/* Logout Button */}
         <Pressable

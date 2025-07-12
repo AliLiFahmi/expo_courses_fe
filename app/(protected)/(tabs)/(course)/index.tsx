@@ -381,7 +381,7 @@ export default function Index() {
                   <View className="flex flex-row flex-wrap mt-3">
                     <View className="bg-gray-800 px-2 py-1 rounded mr-2 mb-1">
                       <Text className="text-gray-300 text-xs">
-                        {course.semester}
+                        Semester: {course.semester}
                       </Text>
                     </View>
                     {course.tasksCount > 0 && (
