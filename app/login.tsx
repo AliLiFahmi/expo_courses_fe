@@ -2,7 +2,7 @@ import { AuthContext } from "@/utils/authContext";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -141,9 +141,9 @@ export default function Login() {
               </View>
 
               {/* Forgot Password Link */}
-              <TouchableOpacity className="self-end mb-6">
+              {/* <TouchableOpacity className="self-end mb-6">
                 <Text className="text-white/80 text-sm">Lupa password?</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
               {/* Error Messages */}
               {(validationError || authError) && (
