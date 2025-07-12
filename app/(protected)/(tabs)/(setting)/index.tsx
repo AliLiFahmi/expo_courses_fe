@@ -1,7 +1,6 @@
 import { AuthContext } from "@/utils/authContext";
 import {
   Bell,
-  ChevronRight,
   HelpCircle,
   LogOut,
   Settings,
@@ -124,7 +123,7 @@ export default function Index() {
 
         {/* Version Info */}
         <View className="items-center mb-6">
-          <Text className="text-gray-500 text-sm">Versi 1.0.0</Text>
+          <Text className="text-gray-500 text-sm">Versi 1.0.1</Text>
         </View>
       </ScrollView>
     </View>

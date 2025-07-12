@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { createContext, PropsWithChildren, useState } from "react";
+import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 
 type User = {
@@ -12,6 +12,8 @@ type AuthState = {
   isLoading: boolean;
   error: string | null;
   user: User | null;
+  isAuthenticated: boolean;
+  isInitialized: boolean; // untuk menandakan apakah pengecekan awal sudah selesai
   login: (data: { email: string; password: string }) => Promise<void>;
   register: (data: {
     full_name: string;
@@ -25,6 +27,8 @@ export const AuthContext = createContext<AuthState>({
   isLoading: false,
   error: null,
   user: null,
+  isAuthenticated: false,
+  isInitialized: false,
   login: async () => {},
   register: async () => {},
   logout: async () => {},
@@ -36,10 +40,36 @@ export function AuthProvider({ children }: PropsWithChildren) {
     login: authLogin,
     register: authRegister,
     logout: authLogout,
+    checkAuthStatus,
     isLoading,
     error,
   } = useAuth();
   const [user, setUser] = useState<User | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Cek status auth saat aplikasi pertama kali dimuat
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        const authData = await checkAuthStatus();
+        if (authData) {
+          setUser(authData.user);
+          // Jika sudah login, redirect ke home
+          router.replace("/");
+        } else {
+          // Jika belum login, redirect ke login page
+          router.replace("/login");
+        }
+      } catch (err) {
+        console.error("Error initializing auth:", err);
+        router.replace("/login");
+      } finally {
+        setIsInitialized(true);
+      }
+    };
+
+    initializeAuth();
+  }, []);
 
   const login = async (data: { email: string; password: string }) => {
     try {
@@ -74,9 +104,19 @@ export function AuthProvider({ children }: PropsWithChildren) {
       console.error(err);
     }
   };
+
   return (
     <AuthContext.Provider
-      value={{ isLoading, error, user, login, register, logout }}
+      value={{
+        isLoading,
+        error,
+        user,
+        isAuthenticated: !!user,
+        isInitialized,
+        login,
+        register,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

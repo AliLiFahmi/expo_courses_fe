@@ -527,7 +527,7 @@ export default function TaskDetail() {
             </Text>
 
             {/* Task Information Grid */}
-            <View className="space-y-4">
+            <View className="space-y-4 grid grid-cols-2 gap-4">
               {/* Deadline */}
               <View className="flex-row items-center">
                 <Clock
@@ -563,7 +563,7 @@ export default function TaskDetail() {
                       {courseInfo.title}
                     </Text>
                     <Text className="text-indigo-300 text-sm">
-                      {courseInfo.class_name}
+                      Semester: {courseInfo.class_name}
                     </Text>
                   </View>
                 </View>

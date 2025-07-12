@@ -1,8 +1,12 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import api from "../lib/api-helper";
-import { removeData, storeData } from "./useAsyncStorage";
-import { removeSecureItem, storeSecureItem } from "./useSecureStore";
+import { getData, removeData, storeData } from "./useAsyncStorage";
+import {
+  getSecureItem,
+  removeSecureItem,
+  storeSecureItem,
+} from "./useSecureStore";
 
 interface LoginData {
   email: string;
@@ -90,10 +94,27 @@ export const useAuth = () => {
     }
   };
 
+  // Fungsi untuk mengecek apakah user sudah login
+  const checkAuthStatus = async () => {
+    try {
+      const token = await getSecureItem("token");
+      const user = await getData("user");
+
+      if (token && user) {
+        return { token, user };
+      }
+      return null;
+    } catch (err) {
+      console.error("Error checking auth status:", err);
+      return null;
+    }
+  };
+
   return {
     login,
     register,
     logout,
+    checkAuthStatus,
     isLoading,
     error,
   };

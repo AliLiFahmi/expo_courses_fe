@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "ZENDO",
+    "name": "Zendo",
     "slug": "ZENDO",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/Logo.png",
-    "scheme": "ZENDO",
+    "icon": "./assets/images/Logo-sm.png",
+    "scheme": "Zendo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/Icon.png",
         "backgroundColor": "#1E1B4B"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.alifahmipro.Zendo"
     },
     "web": {
       "bundler": "metro",
@@ -53,6 +54,12 @@
       "visible": "visible",
       "barStyle": "dark-content",
       "backgroundColor": "#111827"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "964e08fd-28a8-46e4-876c-e5ac9441bd3e"
+      }
     }
   }
 }
