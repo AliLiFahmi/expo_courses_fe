@@ -23,6 +23,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCourse } from "../../../../../hooks/useCourse";
 import { useTask } from "../../../../../hooks/useTask";
 
@@ -193,6 +194,7 @@ const LoadingSkeleton = () => (
 );
 
 export default function CourseDetail() {
+  const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams();
   const [tasks, setTasks] = useState([]);
   const [courseInfo, setCourseInfo] = useState(null);
@@ -357,7 +359,12 @@ export default function CourseDetail() {
   }
 
   return (
-    <View className="flex-1 bg-gray-900">
+    <View
+      className="flex-1 bg-gray-900"
+      style={{
+        paddingTop: insets.top,
+      }}
+    >
       <LinearGradient
         colors={["#1E1B4B", "#312E81", "#1E1B4B"]}
         className="absolute w-full h-full"
@@ -715,6 +722,9 @@ export default function CourseDetail() {
       {/* Floating Action Button */}
       <Pressable
         className="absolute bottom-8 right-6 bg-indigo-500 w-16 h-16 rounded-2xl items-center justify-center shadow-2xl border border-indigo-400/50"
+        style={{
+          bottom: 80 + insets.bottom,
+        }}
         onPress={() => router.push(`/ModalTask?courseId=${id}`)}
       >
         <Plus size={28} color="#FFFFFF" />

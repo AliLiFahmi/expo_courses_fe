@@ -1,6 +1,7 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { X } from "lucide-react-native";
 import { useEffect, useState } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Pressable,
   ScrollView,
@@ -12,6 +13,7 @@ import {
 import { useCourse } from "../../hooks/useCourse";
 
 export default function ModalAdd() {
+  const insets = useSafeAreaInsets();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -67,6 +69,7 @@ export default function ModalAdd() {
       style={{
         backgroundColor: "rgba(17, 24, 39, 0.95)",
         backdropFilter: "blur(20px)",
+        paddingTop: insets.top,
       }}
     >
       <ScrollView

@@ -1,5 +1,6 @@
 import { AuthContext } from "@/utils/authContext";
 import { router } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   BookOpen,
   ChevronRight,
@@ -15,9 +16,15 @@ import { Image, Pressable, ScrollView, Text, View } from "react-native";
 
 export default function Index() {
   const { user } = useContext(AuthContext);
+  const insets = useSafeAreaInsets();
 
   return (
-    <View className="flex-1 flex flex-col bg-gray-900">
+    <View
+      className="flex-1 flex flex-col bg-gray-900"
+      style={{
+        paddingTop: insets.top,
+      }}
+    >
       {/* Header Area dengan Welcome Message */}
       <View className="pt-8 px-4 pb-4">
         <View className="flex flex-row justify-between items-center">

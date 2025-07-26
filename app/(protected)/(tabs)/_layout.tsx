@@ -2,8 +2,11 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import Octicons from "@expo/vector-icons/Octicons";
 import { Tabs } from "expo-router";
 import React from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ButtonTabsLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <React.Fragment>
       <Tabs
@@ -13,9 +16,11 @@ export default function ButtonTabsLayout() {
           tabBarStyle: {
             backgroundColor: "#111827",
             borderTopColor: "#1F2937",
-            height: 60,
+            height: 60 + insets.bottom,
             borderTopWidth: -2,
             paddingTop: 8,
+            paddingBottom: insets.bottom,
+            position: "absolute",
           },
           tabBarLabelStyle: {
             fontSize: 14,

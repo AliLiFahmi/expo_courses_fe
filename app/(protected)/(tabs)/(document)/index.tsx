@@ -6,15 +6,18 @@ import {
   Users,
 } from "lucide-react-native";
 import { ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Index() {
-  return (
-    <View className="flex-1 flex flex-col bg-gray-900">
-      {/* <LinearGradient
-        colors={["#1E1B4B", "#312E81", "#1E1B4B"]}
-        className="absolute w-full h-full"
-      /> */}
+  const insets = useSafeAreaInsets();
 
+  return (
+    <View
+      className="flex-1 flex flex-col bg-gray-900"
+      style={{
+        paddingTop: insets.top,
+      }}
+    >
       {/* Header */}
       <View className="pt-8 px-4 pb-4">
         <View className="flex flex-row justify-between items-center">

@@ -10,10 +10,12 @@ import {
   ToastAndroid,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCourse } from "../../hooks/useCourse";
 import { useTask } from "../../hooks/useTask";
 
 export default function ModalTask() {
+  const insets = useSafeAreaInsets();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -112,6 +114,7 @@ export default function ModalTask() {
       style={{
         backgroundColor: "rgba(17, 24, 39, 0.95)",
         backdropFilter: "blur(20px)",
+        paddingTop: insets.top,
       }}
     >
       <ScrollView

@@ -21,6 +21,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCourse } from "../../../../hooks/useCourse";
 
 // Custom Skeleton Component
@@ -137,6 +138,7 @@ const SearchBarSkeleton = () => (
 );
 
 export default function Index() {
+  const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState("");
   const [activeFilter, setActiveFilter] = useState("Semua");
   const [courses, setCourses] = useState([]);
@@ -257,7 +259,12 @@ export default function Index() {
   );
 
   return (
-    <View className="flex-1 flex flex-col bg-gray-900">
+    <View
+      className="flex-1 flex flex-col bg-gray-900"
+      style={{
+        paddingTop: insets.top,
+      }}
+    >
       {/* Header Area */}
       <View className="pt-8 px-4 pb-4 flex flex-row items-center">
         <View className="flex-1">
@@ -533,6 +540,9 @@ export default function Index() {
       {/* Floating Action Button */}
       <Pressable
         className="absolute bottom-6 right-6 bg-indigo-600 w-14 h-14 rounded-full items-center justify-center shadow-lg"
+        style={{
+          bottom: 80 + insets.bottom,
+        }}
         onPress={() => router.push("/ModalCourse")}
       >
         <Plus size={24} color="#FFFFFF" />

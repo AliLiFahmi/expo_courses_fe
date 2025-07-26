@@ -1,4 +1,5 @@
 import { AuthContext } from "@/utils/authContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Bell,
   HelpCircle,
@@ -11,6 +12,7 @@ import { useContext } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function Index() {
+  const insets = useSafeAreaInsets();
   const { user, logout, isLoading } = useContext(AuthContext);
 
   const handleLogout = async () => {
@@ -60,7 +62,12 @@ export default function Index() {
   ];
 
   return (
-    <View className="flex-1 flex flex-col bg-gray-900">
+    <View
+      className="flex-1 flex flex-col bg-gray-900"
+      style={{
+        paddingTop: insets.top,
+      }}
+    >
       {/* Header Area */}
       <View className="pt-8 px-4 pb-4">
         <Text className="text-white text-3xl font-bold mb-1">Pengaturan</Text>

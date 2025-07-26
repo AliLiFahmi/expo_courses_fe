@@ -29,6 +29,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCourse } from "../../../../../../hooks/useCourse";
 import { useTask } from "../../../../../../hooks/useTask";
 
@@ -178,6 +179,7 @@ const LoadingSkeleton = () => (
 );
 
 export default function TaskDetail() {
+  const insets = useSafeAreaInsets();
   const { taskId } = useLocalSearchParams();
   const [taskInfo, setTaskInfo] = useState(null);
   const [courseInfo, setCourseInfo] = useState(null);
@@ -405,7 +407,12 @@ export default function TaskDetail() {
   // Error state
   if (taskError && !taskInfo) {
     return (
-      <View className="flex-1 bg-gray-900 justify-center items-center">
+      <View
+        className="flex-1 bg-gray-900 justify-center items-center"
+        style={{
+          paddingTop: insets.top,
+        }}
+      >
         <LinearGradient
           colors={["#1E1B4B", "#312E81", "#1E1B4B"]}
           className="absolute w-full h-full"
